@@ -53,6 +53,7 @@ When detection is on, a quiet notification reads "Tarsi is looking out for you".
 | 7 | Get an unusual answer wrong, e.g. 1/2 + 1/3 = 1/6 | "Written by AI" explanation. Any answer that fails the math check shows in the teacher's review queue | Android + laptop |
 | 8 | Teacher: approve or edit a review item | Item moves to reviewed | laptop |
 | 9 | Student: scroll YouTube or TikTok without stopping. On a school day the risk model reaches a check-in at about 35 min and a break at about 55 min; later at night it's sooner | "N min on videos" check-in (with 5 more min), then a 45-second break notification. Tapping opens the lesson; the guardian's Recent nudges shows it | Android |
+| 9b | **Guardian limit (fastest real test).** Guardian: Controls › Break after › Videos & social › **10m**. Student: scroll TikTok or YouTube for 10 min without leaving it | "10-min limit reached" notification with Take a break / 5 more min. It repeats every 10 min while scrolling continues; 5 more min snoozes. The guardian sees it in Recent nudges | Android + guardian |
 | 10 | iPhone student (needs Apple's Family Controls approval) | Same after 30 / 45 / 60 min on chosen apps | iPhone |
 | 11 | Set bedtime a few minutes from now, then scroll a video app for 5 min after it | Wind-down notification. Guardian gets "… is still on the phone" | Android + guardian |
 | 12 | Guardian: switch on Guardian lock (set bedtime to now first). Student: open a video app | LearnShift lock screen covers it. Emergency call works | Android |

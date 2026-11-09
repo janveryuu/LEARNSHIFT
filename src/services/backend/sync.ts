@@ -130,6 +130,10 @@ export async function pullStudent(userId: string) {
     lockEnabled: !!controls.data?.lock_enabled && guardians.length > 0,
     lateNightAlerts: controls.data?.late_alerts ?? true,
   };
+  patch.limits = {
+    scroll: controls.data?.scroll_limit ?? null,
+    games: controls.data?.games_limit ?? null,
+  };
   if (controls.data)
     patch.lock = {
       start: controls.data.lock_start,

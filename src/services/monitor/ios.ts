@@ -103,6 +103,7 @@ type Payload = {
   rootSkillName: string;
   guardianName: string;
   paused: boolean;
+  scrollLimit: number | null;
 };
 
 const hm = (m: number) => ({ hour: Math.floor(m / 60) % 24, minute: m % 60 });
@@ -141,9 +142,12 @@ export function configure(p: Payload) {
 
   // Daytime thresholds.
   if (!p.paused) {
-    const steps = [30, 45, 60, 90];
+    // Apple counts total time on the chosen apps today, so the guardian's
+    // limit becomes the first threshold.
+    const lim = p.scrollLimit ?? 0;
+    const steps = [...new Set([...(lim ? [lim] : []), 30, 45, 60, 90])].sort((a, b) => a - b);
     for (const m of steps) {
-      const level = m >= 60 ? 'break' : 'checkin';
+      const level = m >= 60 || m === lim ? 'break' : 'checkin';
       da.configureActions({
         activityName: DAY,
         callbackName: 'eventDidReachThreshold',
@@ -152,7 +156,14 @@ export function configure(p: Payload) {
           {
             type: 'sendNotification',
             payload: {
-              title: fil ? `${m} min ka na ngayong araw` : `${m} min on your apps today`,
+              title:
+                m === lim
+                  ? fil
+                    ? `Naabot na ang ${m}-min na limit`
+                    : `${m}-min limit reached`
+                  : fil
+                    ? `${m} min ka na ngayong araw`
+                    : `${m} min on your apps today`,
               body: fil
                 ? `Break? 45 segundo ng ${p.rootSkillName} kasama si Tarsi.`
                 : `Break? 45 seconds of ${p.rootSkillName} with Tarsi.`,

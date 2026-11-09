@@ -33,7 +33,8 @@ export type RiskReason =
   | { key: 'pastBedtime' }
   | { key: 'unlocks'; value: number }
   | { key: 'noBreak'; value: number }
-  | { key: 'videos' };
+  | { key: 'videos' }
+  | { key: 'limit'; value: number };
 
 export type RiskResult = {
   risk: number;

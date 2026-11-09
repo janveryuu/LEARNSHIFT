@@ -98,6 +98,8 @@ export function reasonText(t: Strings, r: RiskReason): string {
       return t.reasons.noBreak(r.value);
     case 'videos':
       return t.reasons.videos;
+    case 'limit':
+      return t.reasons.limit(r.value);
   }
 }
 

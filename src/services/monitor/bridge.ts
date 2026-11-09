@@ -80,6 +80,8 @@ export function useMonitorBridge(userId: string | null) {
       focusUntil: focusUntil ?? 0,
       rootSkill: root,
       guardianName: s.guardian.name,
+      scrollLimit: s.guardian.linked ? s.limits.scroll : null,
+      gamesLimit: s.guardian.linked ? s.limits.games : null,
     }).catch(() => {});
   }, [
     userId,
@@ -89,10 +91,13 @@ export function useMonitorBridge(userId: string | null) {
     s.bedtimeDays,
     s.guardian.lockEnabled,
     s.guardian.name,
+    s.guardian.linked,
     s.lock.start,
     s.lock.end,
     s.lock.unlockUntil,
     s.paused,
+    s.limits.scroll,
+    s.limits.games,
     focusUntil,
     root,
   ]);

@@ -37,6 +37,7 @@ const en = {
     winddown: 'Wind-down',
   },
   reasons: {
+    limit: (m: number) => `${m}-min limit`,
     minutes: (n: number) => `${n} min straight`,
     schoolDay: 'school day',
     weekend: 'weekend',

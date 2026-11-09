@@ -142,7 +142,14 @@ export async function decideRequest(id: string, approve: boolean) {
 
 export async function setControls(
   studentId: string,
-  patch: Partial<{ lock_enabled: boolean; lock_start: number; lock_end: number; late_alerts: boolean }>,
+  patch: Partial<{
+    lock_enabled: boolean;
+    lock_start: number;
+    lock_end: number;
+    late_alerts: boolean;
+    scroll_limit: number | null;
+    games_limit: number | null;
+  }>,
 ) {
   const me = useAuth.getState().profile?.id;
   const { error } = await supabase

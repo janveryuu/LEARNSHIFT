@@ -38,6 +38,9 @@ export type GuardianSettings = {
 
 export type LockWindow = { start: number; end: number; unlockUntil: string | null };
 
+/** Guardian-set minutes of non-stop use before a break nudge (null = off). */
+export type Limits = { scroll: number | null; games: number | null };
+
 export type TimeRequest = {
   id: string;
   at: string;
@@ -109,6 +112,7 @@ type State = {
   feed: { day: string; minutes: number; saved: string[] };
   guardian: GuardianSettings;
   lock: LockWindow;
+  limits: Limits;
   requests: TimeRequest[];
   offline: SkillId[];
   built: BuildingId[];
@@ -196,6 +200,7 @@ const shared = () => ({
   breaksDay: todayKey(),
   feed: { day: todayKey(), minutes: 0, saved: [] as string[] },
   lock: { start: 22 * 60, end: 6 * 60, unlockUntil: null },
+  limits: { scroll: null, games: null } as Limits,
   reviewed: {},
   paused: false,
   lastMiss: null,

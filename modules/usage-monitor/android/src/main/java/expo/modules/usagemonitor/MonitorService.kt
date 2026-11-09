@@ -136,7 +136,30 @@ class MonitorService : Service() {
       return idle
     }
 
-    // 4. Daytime: check-in, then a learning break, with cooldowns.
+    // 4. Guardian limit: N minutes of non-stop scrolling or gaming → break,
+    //    repeated every N minutes while it continues.
+    val limit = when (live.cat) {
+      Cat.VIDEO, Cat.SOCIAL -> cfg.scrollLimit
+      Cat.GAMES -> cfg.gamesLimit
+      else -> 0
+    }
+    if (limit > 0) {
+      val sessionStart = now - (live.sessionMin * 60_000).toLong()
+      val last = Store.getLong(this, "lastLimitNudge")
+      if (live.sessionMin >= limit && (last < sessionStart || now - last >= limit * 60_000L)) {
+        reasons.put(JSONObject().put("key", "limit").put("value", limit))
+        val id = record(cfg, "break", reasons, "quiet", clock, 0)
+        Notifier.nudge(this, cfg, "limit", id, live.cat, limit, clock, minutes)
+        Store.putLong(this, "lastLimitNudge", now)
+        Store.putLong(this, "lastNudge", now)
+        countNudge(now)
+        reportSoon(cfg)
+      }
+      // The guardian's limit replaces Tarsi's own timing for this kind of app.
+      return idle
+    }
+
+    // 5. Daytime: check-in, then a learning break, with cooldowns.
     if (now - Store.getLong(this, "lastNudge") < 15 * 60_000L) return idle
     if (nudgesToday(now) >= 8) return idle
     val risk = Risk.score(clock, live.sessionMin, live.cat, live.unlocksLastHour, schoolDay, false)
@@ -249,6 +272,7 @@ class NudgeActionReceiver : BroadcastReceiver() {
     Store.putLong(ctx, "snoozeUntil", System.currentTimeMillis() + 5 * 60_000L)
     // Next nudge may come right after the snooze ends.
     Store.putLong(ctx, "lastNudge", 0L)
+    Store.putLong(ctx, "lastLimitNudge", 0L)
     intent.getStringExtra("id")?.let { id ->
       val e = Store.findEvent(ctx, id)
       if (e != null) Store.enqueue(ctx, JSONObject(e.toString()).put("response", "snoozed"))

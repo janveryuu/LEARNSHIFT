@@ -123,6 +123,12 @@ object Notifier {
         if (fil) "$minutes min ka na sa $word. Pinili ni Tarsi ang $skill para sa iyo." else "You’ve been on $word for $minutes min. Tarsi picked $skill for you.",
         breakUrl,
       )
+      "limit" -> Triple(
+        if (fil) "Naabot na ang $minutes-min na limit" else "$minutes-min limit reached",
+        if (fil) "${cfg.guardianName.ifEmpty { "Ang guardian mo" }} ay nag-set ng $minutes min para sa $word. Oras na para sa 45-segundong break kasama si Tarsi."
+        else "${cfg.guardianName.ifEmpty { "Your guardian" }} set $minutes min for $word. Time for a 45-second break with Tarsi.",
+        breakUrl,
+      )
       "winddown" -> Triple(
         if (fil) "${clock(clock)} na. Oras na para magpahinga" else "It’s ${clock(clock)}. Time to wind down",
         if (fil) "$lateMin min na mula nang oras ng tulog mo. May kalmadong wind-down si Tarsi." else "Bedtime started $lateMin min ago. Tarsi has a calm wind-down ready.",
@@ -143,7 +149,7 @@ object Notifier {
       .setPriority(NotificationCompat.PRIORITY_HIGH)
       .setCategory(NotificationCompat.CATEGORY_REMINDER)
       .setContentIntent(open(ctx, url, 2))
-    if (level == "checkin") {
+    if (level == "checkin" || level == "limit") {
       val snooze = Intent(ctx, NudgeActionReceiver::class.java).setAction(ACTION_SNOOZE).putExtra("id", id)
       b.addAction(0, if (fil) "Mag-break" else "Take a break", open(ctx, url, 3))
       b.addAction(

@@ -16,7 +16,15 @@ export type ChildData = {
   usage: UsageDay[];
   nudges: NudgeEntry[];
   requests: TimeRequest[];
-  controls: { lockEnabled: boolean; lockStart: number; lockEnd: number; lateAlerts: boolean; unlockUntil: string | null };
+  controls: {
+    lockEnabled: boolean;
+    lockStart: number;
+    lockEnd: number;
+    lateAlerts: boolean;
+    unlockUntil: string | null;
+    scrollLimit: number | null;
+    gamesLimit: number | null;
+  };
   settings: { bedtimeStart: number; bedtimeEnd: number; bedtimeDays: BedtimeDays; limitStyle: 'adaptive' | 'fixed' };
 };
 
@@ -109,6 +117,8 @@ export async function loadChild(id: string) {
       lockEnd: c?.lock_end ?? st?.bedtime_end ?? 360,
       lateAlerts: c?.late_alerts ?? true,
       unlockUntil: c?.unlock_until ?? null,
+      scrollLimit: c?.scroll_limit ?? null,
+      gamesLimit: c?.games_limit ?? null,
     },
     settings: {
       bedtimeStart: st?.bedtime_start ?? 1320,

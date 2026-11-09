@@ -43,6 +43,7 @@ const fil: Strings = {
     winddown: 'Pahinga na',
   },
   reasons: {
+    limit: (m) => `${m}-min na limit`,
     minutes: (n) => `${n} min tuloy-tuloy`,
     schoolDay: 'may pasok',
     weekend: 'weekend',

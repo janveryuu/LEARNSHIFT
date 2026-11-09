@@ -24,6 +24,9 @@ data class Config(
   val rootSkill: String,
   val rootSkillName: String,
   val guardianName: String,
+  /** Guardian limits in minutes of non-stop use (0 = off). */
+  val scrollLimit: Int,
+  val gamesLimit: Int,
 ) {
   val fil get() = lang == "fil"
 
@@ -46,6 +49,8 @@ data class Config(
       rootSkill = o.optString("rootSkill", "fractions"),
       rootSkillName = o.optString("rootSkillName", "Fractions"),
       guardianName = o.optString("guardianName", ""),
+      scrollLimit = o.optInt("scrollLimit", 0),
+      gamesLimit = o.optInt("gamesLimit", 0),
     )
   }
 }

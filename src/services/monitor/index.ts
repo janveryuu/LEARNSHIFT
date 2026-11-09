@@ -144,6 +144,8 @@ export type MonitorConfig = {
   focusUntil: number;
   rootSkill: SkillId;
   guardianName: string;
+  scrollLimit: number | null;
+  gamesLimit: number | null;
 };
 
 let lastJson = '';

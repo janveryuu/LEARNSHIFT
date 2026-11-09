@@ -38,6 +38,7 @@ import { todayKey, useAppStore, type TimeRequest } from '@/store/useAppStore';
 import { useAuth } from '@/store/useAuth';
 
 const BEDTIMES = [21 * 60, 21 * 60 + 30, 22 * 60, 22 * 60 + 30, 23 * 60];
+const LIMITS = [0, 10, 15, 20, 30, 45, 60];
 
 /** Everything the guardian screen shows, from the demo store or the server. */
 type GView = {
@@ -56,6 +57,8 @@ type GView = {
   lateAlerts: boolean;
   limitStyle: 'adaptive' | 'fixed';
   unlockUntil: string | null;
+  scrollLimit: number | null;
+  gamesLimit: number | null;
   hasData: boolean;
   approve: (id: string) => void;
   decline: (id: string) => void;
@@ -63,6 +66,8 @@ type GView = {
   setAlerts: (v: boolean) => void;
   setLock: (v: boolean) => void;
   setLimit: (v: 'adaptive' | 'fixed') => void;
+  setScrollLimit: (m: number | null) => void;
+  setGamesLimit: (m: number | null) => void;
 };
 
 function usePitchView(): GView {
@@ -71,6 +76,7 @@ function usePitchView(): GView {
   const bedtime = useAppStore((s) => s.bedtime);
   const requests = useAppStore((s) => s.requests);
   const nudges = useAppStore((s) => s.nudges);
+  const limits = useAppStore((s) => s.limits);
   const s = useAppStore.getState;
   return {
     childName: PITCH_NAMES.student,
@@ -88,6 +94,8 @@ function usePitchView(): GView {
     lateAlerts: guardian.lateNightAlerts,
     limitStyle: guardian.limitStyle,
     unlockUntil: null,
+    scrollLimit: limits.scroll,
+    gamesLimit: limits.games,
     hasData: true,
     approve: (id) => s().resolveRequest(id, 'approved'),
     decline: (id) => s().resolveRequest(id, 'declined'),
@@ -95,6 +103,8 @@ function usePitchView(): GView {
     setAlerts: (v) => s().setGuardian({ lateNightAlerts: v }),
     setLock: (v) => s().setGuardian({ lockEnabled: v }),
     setLimit: (v) => s().setGuardian({ limitStyle: v }),
+    setScrollLimit: (m) => s().hydrate({ limits: { ...s().limits, scroll: m } }),
+    setGamesLimit: (m) => s().hydrate({ limits: { ...s().limits, games: m } }),
   };
 }
 
@@ -130,6 +140,8 @@ function useRealView(onError: (m: string) => void): GView | null {
     lateAlerts: d.controls.lateAlerts,
     limitStyle: d.settings.limitStyle,
     unlockUntil: d.controls.unlockUntil,
+    scrollLimit: d.controls.scrollLimit,
+    gamesLimit: d.controls.gamesLimit,
     hasData: d.usage.some((u) => u.total > 0) || d.nudges.length > 0,
     approve: (id) => {
       patchChild(selected, (x) => ({ ...x, requests: x.requests.map((r) => (r.id === id ? { ...r, status: 'approved' } : r)) }));
@@ -160,6 +172,14 @@ function useRealView(onError: (m: string) => void): GView | null {
     setLimit: (v) => {
       patchChild(selected, (x) => ({ ...x, settings: { ...x.settings, limitStyle: v } }));
       guard(api.setStudentSettings(selected, { limit_style: v }));
+    },
+    setScrollLimit: (m) => {
+      patchChild(selected, (x) => ({ ...x, controls: { ...x.controls, scrollLimit: m } }));
+      guard(api.setControls(selected, { scroll_limit: m }));
+    },
+    setGamesLimit: (m) => {
+      patchChild(selected, (x) => ({ ...x, controls: { ...x.controls, gamesLimit: m } }));
+      guard(api.setControls(selected, { games_limit: m }));
     },
   };
 }
@@ -373,6 +393,28 @@ function Content({ v, wide }: { v: GView; wide: boolean }) {
             options={BEDTIMES.map((m) => ({ value: String(m), label: formatClock(m).replace(':00', '') }))}
             value={String(BEDTIMES.includes(v.bedtimeStart) ? v.bedtimeStart : 22 * 60)}
             onChange={(x) => v.setBedtime(Number(x))}
+            compact
+          />
+        </View>
+        <View style={[styles.gap, styles.toggleRow, styles.column, { borderColor: c.hairline }]}>
+          <Text variant="headline">{g.limitsTitle}</Text>
+          <Text variant="caption">{g.limitsSub}</Text>
+          <Text variant="subhead" color="text">
+            {g.scrollLimit}
+          </Text>
+          <SegmentedControl
+            options={LIMITS.map((m) => ({ value: String(m), label: m ? `${m}m` : g.off }))}
+            value={String(v.scrollLimit ?? 0)}
+            onChange={(x) => v.setScrollLimit(Number(x) || null)}
+            compact
+          />
+          <Text variant="subhead" color="text">
+            {g.gamesLimit}
+          </Text>
+          <SegmentedControl
+            options={LIMITS.map((m) => ({ value: String(m), label: m ? `${m}m` : g.off }))}
+            value={String(v.gamesLimit ?? 0)}
+            onChange={(x) => v.setGamesLimit(Number(x) || null)}
             compact
           />
         </View>
