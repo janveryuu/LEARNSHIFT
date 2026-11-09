@@ -14,7 +14,8 @@ import { useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
 import { fontFor } from '@/design/typography';
 import { stringsFor, useLang } from '@/i18n/useT';
-import { tutor } from '@/services/ai/tutor';
+import { IS_PITCH } from '@/lib/config';
+import { chat as askTutor, explain } from '@/services/ai/liveTutor';
 import type { TutorAnswer, TutorVariant } from '@/services/types';
 import { useAppStore, type Lang } from '@/store/useAppStore';
 
@@ -42,11 +43,12 @@ export default function TutorSheet() {
 
   useEffect(() => {
     let live = true;
-    tutor.explain(qid, wrong, lang, variant).then((r) => {
+    explain(qid, wrong, lang, variant).then((r) => {
       if (!live) return;
       setRes({ key: `${qid}|${wrong}|${lang}|${variant}`, ans: r });
       fade.set(withSequence(withTiming(0.35, { duration: 1 }), withTiming(1, { duration: 320, easing: ease.out })));
-      if (r.confidence < 0.7 && !flagged.current) {
+      // Real builds flag on the server; the demo keeps its local review queue.
+      if (IS_PITCH && r.confidence < 0.7 && !flagged.current) {
         flagged.current = true;
         useAppStore
           .getState()
@@ -63,8 +65,12 @@ export default function TutorSheet() {
     const text = draft.trim();
     if (!text || !ans) return;
     haptic.select();
-    setChat((m) => [...m, { me: text, reply: `${t.tutor.reply} ${ans.example}` }]);
+    const history = chat;
+    setChat((m) => [...m, { me: text, reply: '…' }]);
     setDraft('');
+    askTutor(qid, lang, history, text, `${t.tutor.reply} ${ans.example}`).then((reply) =>
+      setChat((m) => m.map((x, k) => (k === m.length - 1 && x.me === text ? { ...x, reply } : x))),
+    );
   };
 
   return (
@@ -175,7 +181,7 @@ export default function TutorSheet() {
 
             <View style={styles.source}>
               <SealCheck size={16} weight="fill" color={ans.source === 'bank' ? c.success : c.textTertiary} />
-              <Text variant="caption">{t.tutor.source}</Text>
+              <Text variant="caption">{ans.source === 'generated' ? t.tutor.sourceAi : t.tutor.source}</Text>
             </View>
 
             {chat.map((m, i) => (

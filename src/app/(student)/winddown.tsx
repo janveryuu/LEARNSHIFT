@@ -33,6 +33,8 @@ import { ThemeProvider, useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
 import { useLive } from '@/hooks/useLive';
 import { formatClock, useT } from '@/i18n/useT';
+import { IS_PITCH } from '@/lib/config';
+import { notify, respondToNudge } from '@/services/backend/api';
 import { useAppStore } from '@/store/useAppStore';
 
 type Panel = 'gray' | 'breathe' | 'story' | null;
@@ -50,8 +52,10 @@ function WindDown() {
   const t = useT();
   const insets = useSafeAreaInsets();
   const live = useLive();
-  const { alert } = useLocalSearchParams<{ alert?: string }>();
+  const { alert, nudge } = useLocalSearchParams<{ alert?: string; nudge?: string }>();
   const lateAlerts = useAppStore((s) => s.guardian.lateNightAlerts);
+  const guardianName = useAppStore((s) => s.guardian.name);
+  const linked = useAppStore((s) => s.guardian.linked);
   const [cap, setCap] = useState(30);
   const [panel, setPanel] = useState<Panel>(null);
   const logged = useRef(false);
@@ -59,7 +63,16 @@ function WindDown() {
   useEffect(() => {
     if (!logged.current) {
       logged.current = true;
-      useAppStore.getState().logNudge('winddown', live.risk.reasons, 'followed');
+      if (nudge) {
+        // Opened from the phone monitor's notification: it already logged and alerted.
+        respondToNudge(nudge, 'followed');
+      } else {
+        useAppStore.getState().logNudge('winddown', live.risk.reasons, 'followed');
+        if (!IS_PITCH && live.inBedtime && linked) {
+          const late = (live.clock - useAppStore.getState().bedtime.start + 1440) % 1440;
+          notify({ type: 'late_night', clock: live.clock, minutes: late });
+        }
+      }
     }
     // The session cap visibly shrinks from 30 to 15 minutes.
     const id = setTimeout(() => {
@@ -67,7 +80,7 @@ function WindDown() {
       setCap(15);
     }, 1100);
     return () => clearTimeout(id);
-  }, [live.risk.reasons]);
+  }, [live.risk.reasons, live.inBedtime, live.clock, nudge, linked]);
 
   const [h, m] = formatClock(live.clock).split(' ');
   return (
@@ -92,9 +105,9 @@ function WindDown() {
           </View>
           <View style={styles.chips}>
             <Chip label={t.winddown.noQuiz} kind="outline" />
-            {alert === '1' || lateAlerts ? (
+            {alert === '1' || (lateAlerts && linked && live.inBedtime) ? (
               <Chip
-                label={t.winddown.guardianSent}
+                label={t.winddown.guardianSent(guardianName)}
                 kind="tinted"
                 icon={<ShieldCheck size={14} weight="fill" color={c.accent} />}
               />

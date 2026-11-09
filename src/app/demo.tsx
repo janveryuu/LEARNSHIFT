@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Play } from 'phosphor-react-native';
 
@@ -21,11 +21,17 @@ import { useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
 import { useLive } from '@/hooks/useLive';
 import { formatClock, useT } from '@/i18n/useT';
+import { IS_PITCH } from '@/lib/config';
 import { runScenario, type ScenarioId } from '@/services/demo';
 import { useAppStore, type Lang, type Role, type ThemePref } from '@/store/useAppStore';
 import { useSession } from '@/store/useSession';
 
 export default function Demo() {
+  if (!IS_PITCH) return <Redirect href="/" />;
+  return <DemoPanel />;
+}
+
+function DemoPanel() {
   const { c } = useTheme();
   const t = useT();
   const insets = useSafeAreaInsets();

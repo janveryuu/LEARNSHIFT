@@ -22,3 +22,4 @@ export * from './Text';
 export * from './TickGauge';
 export * from './Toggle';
 export * from './WheelPicker';
+export * from './TextField';

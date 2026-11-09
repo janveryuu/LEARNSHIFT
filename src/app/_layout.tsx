@@ -15,13 +15,16 @@ import {
 
 import { ease, timing, useReducedMotion } from '@/design/motion';
 import { ThemeProvider, useTheme } from '@/design/theme';
+import { SessionEffects } from '@/services/backend/session';
 import { useAppStore } from '@/store/useAppStore';
+import { useAuth } from '@/store/useAuth';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({ Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold });
   const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
+  const authReady = useAuth((s) => s.status !== 'loading');
 
   useEffect(() => {
     if (hydrated) return;
@@ -29,16 +32,15 @@ export default function RootLayout() {
   }, [hydrated]);
 
   useEffect(() => {
-    if ((loaded || error) && hydrated) SplashScreen.hideAsync().catch(() => {});
-  }, [loaded, error, hydrated]);
+    if ((loaded || error) && hydrated && authReady) SplashScreen.hideAsync().catch(() => {});
+  }, [loaded, error, hydrated, authReady]);
 
   if ((!loaded && !error) || !hydrated) return null;
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <ThemeProvider>
-        <Shell />
-      </ThemeProvider>
+      <SessionEffects />
+      <ThemeProvider>{authReady ? <Shell /> : null}</ThemeProvider>
     </GestureHandlerRootView>
   );
 }
@@ -52,6 +54,7 @@ function Shell() {
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
+          <Stack.Screen name="account" options={{ presentation: 'modal', contentStyle: { backgroundColor: c.bg } }} />
           <Stack.Screen name="(student)" />
           <Stack.Screen name="guardian" options={{ animation: 'fade' }} />
           <Stack.Screen name="teacher" options={{ animation: 'fade' }} />

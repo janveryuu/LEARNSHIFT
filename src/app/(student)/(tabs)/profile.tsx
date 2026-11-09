@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
-import { FileText, Info, Lifebuoy, ListChecks, ShieldCheck } from 'phosphor-react-native';
+import { FileText, Info, Lifebuoy, ListChecks, ShieldCheck, UserCircle } from 'phosphor-react-native';
 
 import { TarsiAvatar } from '@/components/mascot/Tarsi';
 import { Screen } from '@/components/student/Screen';
@@ -10,6 +10,8 @@ import { Card, DarkTile, LargeTitleHeader, ListGroup, ListRow, SegmentedControl,
 import { useTheme } from '@/design/theme';
 import { space } from '@/design/tokens';
 import { formatClock, useT } from '@/i18n/useT';
+import { IS_PITCH } from '@/lib/config';
+import { useAuth } from '@/store/useAuth';
 import { useAppStore, type ThemePref } from '@/store/useAppStore';
 import { useSession } from '@/store/useSession';
 
@@ -24,6 +26,10 @@ export default function Profile() {
   const nudges = useAppStore((s) => s.nudges.length);
   const [confirm, setConfirm] = useState(false);
   const [cleared, setCleared] = useState(false);
+  const name = useAppStore((s) => s.studentName);
+  const classes = useAppStore((s) => s.classes);
+  const grade = useAuth((s) => s.profile?.grade ?? null);
+  const pitchGrade = IS_PITCH ? 8 : grade;
 
   let i = 0;
   return (
@@ -32,8 +38,10 @@ export default function Profile() {
         <Card style={styles.me}>
           <TarsiAvatar size={58} />
           <View style={styles.flex}>
-            <Text variant="title">Mika</Text>
-            <Text variant="subhead">{t.profile.grade}</Text>
+            <Text variant="title" numberOfLines={1}>
+              {name}
+            </Text>
+            <Text variant="subhead">{t.profile.grade(pitchGrade, classes[0]?.name ?? '')}</Text>
           </View>
         </Card>
       </Stagger>
@@ -55,10 +63,10 @@ export default function Profile() {
         />
         <DarkTile
           title={t.profile.guardian}
-          status={guardian.linked ? `${t.profile.linked} · ${guardian.name}` : '—'}
+          status={guardian.linked ? `${t.profile.linked} · ${guardian.name}` : t.acct.linkTitle}
           statusAccent
           style={styles.tile}
-          onPress={() => router.push('/privacy')}
+          onPress={() => router.push(IS_PITCH ? '/privacy' : '/account')}
           art={<ShieldArt />}
         />
         <DarkTile
@@ -87,6 +95,13 @@ export default function Profile() {
 
       <Stagger index={i++}>
         <ListGroup>
+          {!IS_PITCH ? (
+            <ListRow
+              title="Account"
+              icon={<UserCircle size={20} weight="fill" color={c.accent} />}
+              onPress={() => router.push('/account')}
+            />
+          ) : null}
           <ListRow
             title={t.profile.privacy}
             icon={<ShieldCheck size={20} weight="fill" color={c.success} />}
@@ -110,7 +125,7 @@ export default function Profile() {
           />
           <ListRow
             title={t.profile.version}
-            value="1.0.0 (AIdeathon)"
+            value="1.0.0"
             icon={<Info size={20} weight="fill" color={c.textSecondary} />}
             chevron={false}
           />
@@ -120,10 +135,14 @@ export default function Profile() {
       <Stagger index={i++}>
         <ListGroup>
           <ListRow
-            title={cleared ? t.profile.delDone : confirm ? t.profile.delConfirm : t.profile.del}
+            title={IS_PITCH ? (cleared ? t.profile.delDone : confirm ? t.profile.delConfirm : t.profile.del) : t.profile.del}
             destructive
             chevron={false}
             onPress={() => {
+              if (!IS_PITCH) {
+                router.push('/account');
+                return;
+              }
               if (!confirm) {
                 setConfirm(true);
                 return;

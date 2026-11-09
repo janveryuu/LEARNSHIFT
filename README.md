@@ -1,83 +1,92 @@
 # LearnShift
 
 **Same phone, better minutes.**
-LearnShift notices when screen time is turning unhealthy and turns that moment into a short lesson on the exact skill the student is missing.
+LearnShift notices when screen time turns into doomscrolling and turns that moment into a short lesson on the exact skill the student is missing.
 
-Built for the AIdeathon: Tech Connect SYNC. Frontend prototype for students, guardians and teachers.
+Built for the AIdeathon: Tech Connect SYNC. One app for three roles: students, guardians and teachers.
 
 ---
 
-## Features
+## What works
 
-**Student**
-- Home with streak, screen-time gauge and live risk chip
-- Smart nudges in four calm levels: check-in, learning break, wind-down, guardian lock
-- 45-second learning breaks with idea cards and adaptive quizzes
-- Bilingual AI tutor (English / Filipino) that explains the student's exact mistake
-- Skill Map showing the root learning gap
-- Insights: weekly report, learning heatmap, shareable card
-- *Your little isla*: a calm island that grows with learning (with Tarsi, the tarsier guide)
-- Focus timer, offline lesson packs, privacy center, nudge history
+**Student (Android and iPhone)**
+- Doomscroll detection:
+  - Android: watches which app is in front and for how long, then sends a check-in, a 45-second learning break, or a wind-down after bedtime.
+  - iPhone: uses Apple Screen Time thresholds on the apps the student picks.
+- Adaptive quizzes and learning breaks. Mastery is tracked per skill (Bayesian Knowledge Tracing), and the app finds the root gap on a prerequisite graph.
+- Gemini tutor in English and Filipino. It explains the exact mistake with the question's own numbers, and it checks its own math before showing an answer.
+- Streaks, coins, *Your little isla*, insights, focus timer, offline packs, privacy center with "Download my data".
 
-**Guardian**: weekly habit summary, bedtime and lock controls, request inbox (habits only, never grades)
+**Guardian**
+- Weekly habit summary, late-night alerts, bedtime and night-lock controls.
+- Live "15 more minutes" requests. Habits only, never grades.
 
-**Teacher**: class skill heatmap, needs-support list, review queue for low-confidence tutor answers (learning only, never screen time)
+**Teacher (best on a laptop)**
+- Classes with join codes and a live mastery heatmap.
+- A needs-support list, and a review queue for AI answers that failed the math check. Learning only, never screen time.
 
-## AI components (mocked on-device)
+## Architecture
 
-| Component | What it does |
-|---|---|
-| Risk model | Logistic score from session length, time of day, school day, app type, with readable reasons |
-| Gap engine | Bayesian Knowledge Tracing over a prerequisite graph to find the root skill gap |
-| Intervention policy | Safety guardrails first, then Thompson sampling to pick the gentlest nudge that works |
-| Tutor | Misconception bank and step-by-step explanations; flags low-confidence answers for teacher review |
+```
+Phone app (Expo) ── Supabase: Auth · Postgres + row-level security · Realtime · Edge Functions
+   │                                         │
+   └ native monitor (Android service /       ├ tutor   → Gemini (gemini-3.5-flash, falls back to -lite)
+     iOS Screen Time extension) ── ingest ───┤ notify  → Expo push
+                                             └ delete-account
+```
 
-All four live behind typed interfaces in `src/services/types.ts`, ready for a real backend.
+- **Privacy:** the list of apps a student used never leaves the phone; only daily totals and nudges are uploaded. Database policies enforce who sees what, and 59 automated checks prove it.
+- **Offline-first:** the app works from a local copy and syncs writes when back online.
 
-## Tech stack
-
-Expo SDK 58 · React Native · Expo Router · TypeScript · Reanimated 4 · Zustand · FlashList · React Native SVG
-
-## Getting started
+## Run it
 
 ```bash
 npm install
-npx expo start
+npx expo start            # web: press w
 ```
 
-- **Phone:** scan the QR code with Expo Go
-- **Web:** press `w` (best for the Teacher and Guardian dashboards)
+- `.env` holds the public Supabase URL and publishable key.
+- The Gemini key is a server secret: `npx supabase secrets set GEMINI_API_KEY=...`
 
-## Demo
+**Builds (EAS):**
 
-Tap **Demo** on Home (or long-press the LearnShift logo) to open the demo panel:
+```bash
+npx eas-cli@latest build -p android --profile preview   # real app, APK
+npx eas-cli@latest build -p android --profile pitch     # demo build with the Demo panel
+npx eas-cli@latest update --channel preview             # ship JS fixes over the air
+```
 
-1. **Afternoon scroll**: a 45-minute video session triggers a check-in, then a learning break
-2. **11:30 PM school night**: night theme and wind-down mode
-3. **Guardian lock**: ask a guardian for 15 more minutes and approve it from the Guardian view
-4. **Wrong answer**: the tutor explains the exact mistake, in English or Filipino
+**iPhone Screen Time:** needs an Apple Developer account and Apple's Family Controls approval. Then build with `APPLE_TEAM_ID=XXXXXXXXXX`; the Screen Time plugin turns on only when that variable is set.
 
-Switch **Role** in the demo panel to see the Guardian and Teacher views.
+**Backend:**
+- Schema: `supabase/migrations/`
+- Functions: `supabase/functions/`
+- Apply: `npx supabase db push` and `npx supabase functions deploy`
+
+## Testing
+
+[TESTING.md](TESTING.md) has the 18-step phone checklist. Automated checks:
+
+```bash
+node --env-file=.env scripts/backend-test.mjs
+npm run typecheck
+npm run lint
+```
 
 ## Project structure
 
 ```
-src/
-  app/          screens (Expo Router)
-  components/   UI, learning, isla, student and teacher components
-  services/     mock AI and usage data
-  store/        app state
-  data/         skills, questions, lessons, seed data
-  i18n/         English and Filipino strings
+src/app/            screens (Expo Router): student, guardian, teacher, onboarding, account
+src/services/       backend (api, sync, guardian, teacher), monitor (Android/iOS), ai, notifications
+src/store/          local state (offline-first) and auth
+modules/usage-monitor/   native Android module (Kotlin): detection service, nudges, reporting
+supabase/           migrations and edge functions (tutor, notify, ingest, delete-account)
 ```
-
-## Privacy
-
-No real accounts or data. Screen-time data is simulated. Guardians see habits only; teachers see learning only.
 
 ## AI tools used
 
-- **Claude Code (Anthropic)**: planning, UI, screens, mock AI services and bilingual content, built from the team's brief and concept
+- **Claude Code (Anthropic):** planning, design, app and backend code, native Android module, tests and bilingual content, built from the team's brief.
+- **Google Gemini (gemini-3.5-flash):** the in-app tutor's explanations and chat.
 
 ## License
 

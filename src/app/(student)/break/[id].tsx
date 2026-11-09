@@ -28,6 +28,7 @@ import { radius, space } from '@/design/tokens';
 import { useNightGuard } from '@/hooks/useNightGuard';
 import { useLive } from '@/hooks/useLive';
 import { useL, useT } from '@/i18n/useT';
+import { respondToNudge } from '@/services/backend/api';
 import { useAppStore } from '@/store/useAppStore';
 
 const SECONDS = 45;
@@ -43,7 +44,7 @@ export default function BreakPlayer() {
   const t = useT();
   const L = useL();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: SkillId; from?: string }>();
+  const { id, nudge } = useLocalSearchParams<{ id: SkillId; from?: string; nudge?: string }>();
   const skill = (id ?? 'fractions') as SkillId;
   const lesson = lessonFor(skill);
   useNightGuard();
@@ -64,7 +65,9 @@ export default function BreakPlayer() {
   const finish = () => {
     const s = useAppStore.getState();
     s.recordBreak();
-    s.logNudge('break', live.risk.reasons, 'took');
+    // From a phone-monitor notification: that nudge is already logged; record the answer.
+    if (nudge) respondToNudge(nudge, 'took');
+    else s.logNudge('break', live.risk.reasons, 'took');
     s.reward('break', true);
     setPhase({ kind: 'result' });
   };
@@ -254,7 +257,10 @@ function QuestionStep({ qid, label, last, onNext }: { qid: string; label: string
     setPicked(i);
     const correct = i === q.answer;
     const s = useAppStore.getState();
-    s.answer({ skill: q.skill, correct, seconds: secondsSince(started.current), hints: 0 });
+    s.answer(
+      { skill: q.skill, correct, seconds: secondsSince(started.current), hints: 0 },
+      { questionId: q.id, chosen: i, context: 'break' },
+    );
     if (correct) {
       haptic.success();
       setBurst((b) => b + 1);

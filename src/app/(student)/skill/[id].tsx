@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CalendarCheck, Target } from 'phosphor-react-native';
 
 import { BarChart, Card, Chip, PillButton, Ring, SheetHeader, Text } from '@/components/ui';
-import { MIKA_HISTORY, SKILL_BY_ID, type SkillId } from '@/data/skills';
+import { SKILL_BY_ID, type SkillId } from '@/data/skills';
 import { useTheme } from '@/design/theme';
 import { space } from '@/design/tokens';
 import { useLive } from '@/hooks/useLive';
@@ -26,8 +26,13 @@ export default function SkillSheet() {
   const isRoot = skill.id === live.root;
   const fc = gapEngine.forecast(mastery, skill.id);
   const date = fc.date.toLocaleDateString(lang === 'fil' ? 'fil-PH' : 'en-US', { month: 'short', day: 'numeric' });
-  const history = [...MIKA_HISTORY[skill.id], m].map((v) => Math.round(v * 100));
-  const weeks = lang === 'fil' ? ['L1', 'L2', 'L3', 'L4', 'L5', 'Ngayon'] : ['W1', 'W2', 'W3', 'W4', 'W5', 'Now'];
+  const allHistory = useAppStore((s) => s.history);
+  const past = allHistory[skill.id] ?? [];
+  const history = [...past, m].map((v) => Math.round(v * 100));
+  const weeks = [
+    ...past.map((_, k) => (lang === 'fil' ? `L${k + 1}` : `W${k + 1}`)),
+    lang === 'fil' ? 'Ngayon' : 'Now',
+  ];
   const names = (ids: SkillId[]) => ids.map((x) => L(SKILL_BY_ID[x].name)).join(', ');
 
   return (

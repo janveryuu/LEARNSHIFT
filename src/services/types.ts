@@ -61,7 +61,8 @@ export type AnswerEvidence = {
 export type Forecast = { weeks: number; date: Date; mastered: boolean };
 
 export interface GapEngine {
-  update(mastery: Mastery, e: AnswerEvidence): Mastery;
+  /** `damping` overrides how far one answer moves mastery (the pre-test uses more). */
+  update(mastery: Mastery, e: AnswerEvidence, damping?: number): Mastery;
   /** Deepest weak prerequisite behind `target`. */
   rootGap(mastery: Mastery, target?: SkillId): SkillId;
   /** Weak skills that `root` is holding back. */

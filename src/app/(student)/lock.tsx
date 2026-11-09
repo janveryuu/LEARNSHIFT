@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,7 +10,9 @@ import { ThemeProvider, useTheme } from '@/design/theme';
 import { space } from '@/design/tokens';
 import { useLive } from '@/hooks/useLive';
 import { formatClock, formatDuration, useT } from '@/i18n/useT';
-import { useAppStore } from '@/store/useAppStore';
+import { IS_PITCH } from '@/lib/config';
+import { requestTime } from '@/services/backend/api';
+import { lockActive, useAppStore } from '@/store/useAppStore';
 import { useSession } from '@/store/useSession';
 
 export default function LockScreen() {
@@ -26,19 +28,48 @@ function Lock() {
   const t = useT();
   const insets = useSafeAreaInsets();
   const live = useLive();
-  const bedtime = useAppStore((s) => s.bedtime);
+  const pitchWindow = useAppStore((s) => s.bedtime);
+  const lock = useAppStore((s) => s.lock);
   const guardian = useAppStore((s) => s.guardian);
+  const studentName = useAppStore((s) => s.studentName);
+  const locked = useAppStore((s) => lockActive(s, live.clock));
   const lockRequestId = useSession((s) => s.lockRequestId);
   const fresh = useAppStore((s) => s.requests.find((r) => r.id === lockRequestId) ?? null);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const logged = useRef(false);
+  // The guardian's lock hours in real builds; the demo uses bedtime.
+  const bedtime = IS_PITCH ? pitchWindow : { start: lock.start, end: lock.end };
 
   useEffect(() => {
-    if (logged.current) return;
+    // The phone monitor logs real locks itself; only the demo logs here.
+    if (logged.current || !IS_PITCH) return;
     logged.current = true;
     useAppStore.getState().logNudge('lock', live.risk.reasons, 'locked');
   }, [live.risk.reasons]);
 
-  // Minutes from now until the bedtime window ends.
+  const ask = async () => {
+    if (IS_PITCH) {
+      useSession.getState().setLockRequestId(useAppStore.getState().requestTime());
+      return;
+    }
+    setSending(true);
+    setError(null);
+    try {
+      const r = await requestTime(15);
+      const s = useAppStore.getState();
+      s.hydrate({ requests: [{ id: r.id, at: r.created_at, minutes: r.minutes, status: 'pending' }, ...s.requests] });
+      useSession.getState().setLockRequestId(r.id);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setSending(false);
+    }
+  };
+  // Not locked (window over, or the guardian approved): let the student go.
+  const free = !IS_PITCH && !locked;
+
+  // Minutes from now until the lock window ends.
   const total = (bedtime.end - bedtime.start + 1440) % 1440 || 1440;
   const leftMin = (bedtime.end - live.clock + 1440) % 1440;
   const progress = Math.max(0, Math.min(1, leftMin / total));
@@ -48,7 +79,7 @@ function Lock() {
       style={[styles.root, { backgroundColor: c.bg, paddingTop: insets.top + 8, paddingBottom: insets.bottom + 20 }]}
     >
       <View style={styles.demo}>
-        <DevChip label={t.demo.title} onPress={() => router.push('/demo')} />
+        {IS_PITCH ? <DevChip label={t.demo.title} onPress={() => router.push('/demo')} /> : null}
       </View>
       <View style={styles.center}>
         <Ring
@@ -67,16 +98,21 @@ function Lock() {
           {t.lock.until(formatClock(bedtime.end))}
         </Text>
         <Text variant="subhead" align="center">
-          {t.lock.setBy(guardian.name)} · {t.lock.rest}
+          {t.lock.setBy(guardian.name)} · {t.lock.rest(studentName.split(' ')[0])}
         </Text>
       </View>
 
       <View style={styles.actions}>
-        {fresh?.status === 'approved' ? (
+        {error ? (
+          <Text variant="subhead" color="danger" align="center">
+            {error}
+          </Text>
+        ) : null}
+        {fresh?.status === 'approved' || free ? (
           <View style={styles.status}>
             <CheckCircle size={22} weight="fill" color={c.success} />
             <Text variant="headline" color="success">
-              {t.lock.approved}
+              {fresh?.status === 'approved' ? t.lock.approved : t.lock.free}
             </Text>
           </View>
         ) : fresh?.status === 'declined' ? (
@@ -93,7 +129,7 @@ function Lock() {
           </View>
         ) : null}
 
-        {fresh?.status === 'approved' ? (
+        {fresh?.status === 'approved' || free ? (
           <PillButton label={t.common.continue} size="lg" block onPress={() => router.dismissTo('/home')} />
         ) : (
           <PillButton
@@ -101,8 +137,8 @@ function Lock() {
             kind="secondary"
             size="lg"
             block
-            disabled={!!fresh}
-            onPress={() => useSession.getState().setLockRequestId(useAppStore.getState().requestTime())}
+            disabled={!!fresh || sending || (!IS_PITCH && !guardian.linked)}
+            onPress={ask}
           />
         )}
         <PillButton

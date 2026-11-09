@@ -8,8 +8,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "preview"
     },
-    "production": {}
+    "production": {
+      "channel": "production"
+    },
+    "pitch": {
+      "extends": "preview",
+      "channel": "pitch",
+      "env": {
+        "EXPO_PUBLIC_PITCH": "1"
+      }
+    }
   }
 }

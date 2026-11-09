@@ -25,6 +25,9 @@ import { spring } from '@/design/motion';
 import { useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
 import { useT } from '@/i18n/useT';
+import { IS_PITCH } from '@/lib/config';
+import { exportMyData } from '@/services/backend/api';
+import { useAuth } from '@/store/useAuth';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Privacy() {
@@ -36,18 +39,27 @@ export default function Privacy() {
   const seesIcons = [Clock, Timer, AppWindow, LockOpen];
   const neverIcons = [ChatsCircle, Monitor, Globe, Keyboard];
 
-  const exportData = () => {
+  const name = useAppStore((s) => s.studentName);
+  const answers = useAppStore((s) => s.answers);
+  const grade = useAuth((s) => s.profile?.grade ?? (IS_PITCH ? 8 : null));
+
+  const exportData = async () => {
     const s = useAppStore.getState();
-    const data = {
-      profile: { name: 'Mika', grade: 8, section: 'Sampaguita' },
-      mastery: s.mastery,
-      nudges: s.nudges.map((n) => ({ at: n.at, level: n.level, response: n.response })),
-      coins: s.coins,
-      note: 'Usage metadata stays on this phone. No messages, screens or browsing are ever collected.',
-    };
+    const data = IS_PITCH
+      ? {
+          profile: { name: 'Mika', grade: 8, section: 'Sampaguita' },
+          mastery: s.mastery,
+          nudges: s.nudges.map((n) => ({ at: n.at, level: n.level, response: n.response })),
+          coins: s.coins,
+          note: 'Usage metadata stays on this phone. No messages, screens or browsing are ever collected.',
+        }
+      : await exportMyData();
     setExported(true);
     Share.share({ message: JSON.stringify(data, null, 2) }).catch(() => {});
   };
+  const holdItems = t.privacy.holdItems.map(([k, v], idx) =>
+    idx === 0 ? [k, [name, grade ? `Grade ${grade}` : ''].filter(Boolean).join(' · ')] : idx === 2 ? [k, `${answers}`] : [k, v],
+  );
 
   let i = 0;
   return (
@@ -133,7 +145,7 @@ export default function Privacy() {
           </Pressable>
           {open ? (
             <View style={styles.holdList}>
-              {t.privacy.holdItems.map(([k, v]) => (
+              {holdItems.map(([k, v]) => (
                 <View key={k} style={[styles.holdRow, { borderColor: c.hairline }]}>
                   <Text variant="body" style={styles.flex}>
                     {k}

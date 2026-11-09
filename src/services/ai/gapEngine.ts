@@ -14,7 +14,7 @@ const GAIN_PER_BREAK = 0.05;
  * Hints and very fast guesses weaken the evidence of a correct answer;
  * a slow wrong answer is stronger evidence of a gap than a rushed one.
  */
-function bktUpdate(p: number, e: AnswerEvidence): number {
+function bktUpdate(p: number, e: AnswerEvidence, damping = DAMPING): number {
   const { pT, pS } = SKILL_BY_ID[e.skill].bkt;
   let { pG } = SKILL_BY_ID[e.skill].bkt;
   // Hints make a correct answer look more like a guess.
@@ -29,7 +29,7 @@ function bktUpdate(p: number, e: AnswerEvidence): number {
   const learned = posterior + (1 - posterior) * pT;
   // One answer is weak evidence for a 12-year-old's real understanding:
   // move only part of the way toward the BKT estimate.
-  const next = p + DAMPING * (learned - p);
+  const next = p + damping * (learned - p);
   return Math.max(0.02, Math.min(0.99, next));
 }
 
@@ -43,8 +43,8 @@ function rootOf(mastery: Mastery, target: SkillId, seen = new Set<SkillId>()): S
 }
 
 export const gapEngine: GapEngine = {
-  update(mastery, e) {
-    return { ...mastery, [e.skill]: bktUpdate(mastery[e.skill], e) };
+  update(mastery, e, damping) {
+    return { ...mastery, [e.skill]: bktUpdate(mastery[e.skill], e, damping) };
   },
 
   rootGap(mastery, target) {

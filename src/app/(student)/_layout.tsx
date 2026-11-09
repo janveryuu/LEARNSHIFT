@@ -1,10 +1,13 @@
 import { Stack } from 'expo-router';
 
 import { useTheme } from '@/design/theme';
+import { useRoleGate } from '@/hooks/useRoleGate';
 
 /** Student stack: tabs at the root, everything else pushed or presented over them. */
 export default function StudentLayout() {
   const { c } = useTheme();
+  const gate = useRoleGate('student');
+  if (gate) return gate;
   const sheet = { presentation: 'modal' as const, contentStyle: { backgroundColor: c.bg } };
   const full = { presentation: 'fullScreenModal' as const, animation: 'fade' as const };
   return (

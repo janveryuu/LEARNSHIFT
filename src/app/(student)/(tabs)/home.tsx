@@ -27,6 +27,7 @@ import { fontFor } from '@/design/typography';
 import { useLive } from '@/hooks/useLive';
 import { splitDuration, useWeek } from '@/hooks/useWeek';
 import { formatClock, formatDuration, useL, useT } from '@/i18n/useT';
+import { IS_PITCH } from '@/lib/config';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Home() {
@@ -58,7 +59,7 @@ export default function Home() {
       tabs
       overlay={
         <View style={[styles.demo, { bottom: inset - 6 }]} pointerEvents="box-none">
-          <DevChip label={t.demo.title} onPress={openDemo} />
+          {IS_PITCH ? <DevChip label={t.demo.title} onPress={openDemo} /> : null}
         </View>
       }
     >
@@ -66,7 +67,7 @@ export default function Home() {
         <Pressable
           onLongPress={() => {
             haptic.medium();
-            openDemo();
+            if (IS_PITCH) openDemo();
           }}
           delayLongPress={450}
           accessibilityRole="header"

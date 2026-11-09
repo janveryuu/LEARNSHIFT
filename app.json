@@ -8,17 +8,28 @@
     "scheme": "learnshift",
     "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "com.learnshift.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#EFEFEF",
+        "backgroundColor": "#FDF1E2",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.learnshift.app",
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+      ]
     },
     "web": {
       "output": "single",
@@ -29,9 +40,17 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#EFEFEF",
+          "backgroundColor": "#FDF1E2",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 180
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#E2582B",
+          "defaultChannel": "family"
         }
       ]
     ],
@@ -49,6 +68,12 @@
         "projectId": "37b7ce87-f558-4b93-9e85-d3d0ccd4927b"
       }
     },
-    "owner": "janveryu1"
+    "owner": "janveryu1",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/37b7ce87-f558-4b93-9e85-d3d0ccd4927b"
+    }
   }
 }

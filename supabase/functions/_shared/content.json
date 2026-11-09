@@ -1,0 +1,803 @@
+{
+ "questions": {
+  "fra-1": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "1/2 + 1/3 = ?",
+    "fil": "1/2 + 1/3 = ?"
+   },
+   "options": [
+    "2/5",
+    "5/6",
+    "1/6",
+    "2/6"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Make the pieces the same size first.",
+    "fil": "Gawing magkasinlaki muna ang mga piraso."
+   },
+   "mis": {
+    "0": "frac-add-across",
+    "2": "unknown",
+    "3": "frac-add-across"
+   }
+  },
+  "fra-2": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "Which is bigger: 1/3 or 1/4?",
+    "fil": "Alin ang mas malaki: 1/3 o 1/4?"
+   },
+   "options": [
+    "1/3",
+    "1/4",
+    "Equal",
+    "Can’t tell"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Cut a pizza into 3 or into 4. Which slice is bigger?",
+    "fil": "Hatiin ang pizza sa 3 o sa 4. Aling hiwa ang mas malaki?"
+   },
+   "mis": {
+    "1": "frac-compare-denominator",
+    "2": "unknown"
+   }
+  },
+  "fra-3": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "3/4 − 1/4 = ?",
+    "fil": "3/4 − 1/4 = ?"
+   },
+   "options": [
+    "1/2",
+    "2/0",
+    "3/16",
+    "1"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Same bottom? Subtract the tops only.",
+    "fil": "Pareho ang ibaba? Ibawas lang ang itaas."
+   },
+   "mis": {
+    "1": "frac-add-across",
+    "2": "unknown"
+   }
+  },
+  "fra-4": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "2/3 + 1/6 = ?",
+    "fil": "2/3 + 1/6 = ?"
+   },
+   "options": [
+    "3/9",
+    "5/6",
+    "3/6",
+    "1/2"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Turn thirds into sixths.",
+    "fil": "Gawing sixths ang thirds."
+   },
+   "mis": {
+    "0": "frac-add-across",
+    "2": "frac-no-common",
+    "3": "frac-no-common"
+   }
+  },
+  "fra-5": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "2/3 × 3/5 = ?",
+    "fil": "2/3 × 3/5 = ?"
+   },
+   "options": [
+    "2/5",
+    "5/8",
+    "10/9",
+    "6/8"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Multiply tops, multiply bottoms, then simplify.",
+    "fil": "I-multiply ang itaas at ibaba, saka pasimplehin."
+   },
+   "mis": {
+    "1": "frac-add-across",
+    "2": "unknown",
+    "3": "frac-add-across"
+   }
+  },
+  "fra-6": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "3/4 ÷ 1/2 = ?",
+    "fil": "3/4 ÷ 1/2 = ?"
+   },
+   "options": [
+    "3/8",
+    "3/2",
+    "1/2",
+    "4/3"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Dividing by 1/2 is the same as times 2.",
+    "fil": "Ang hatiin sa 1/2 ay katulad ng times 2."
+   },
+   "mis": {
+    "0": "frac-divide-noflip",
+    "3": "unknown"
+   }
+  },
+  "fra-7": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "1 1/2 + 2 2/3 = ?",
+    "fil": "1 1/2 + 2 2/3 = ?"
+   },
+   "options": [
+    "3 3/5",
+    "4 1/6",
+    "3 1/6",
+    "4 3/5"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Add wholes, then sixths. 7/6 is more than 1.",
+    "fil": "Pagsamahin ang buo, saka sixths. Lampas 1 ang 7/6."
+   },
+   "mis": {
+    "0": "frac-add-across",
+    "2": "unknown",
+    "3": "frac-add-across"
+   }
+  },
+  "fra-8": {
+   "skill": "fractions",
+   "prompt": {
+    "en": "A recipe needs 3/4 cup sugar. You make half. How much sugar?",
+    "fil": "Kailangan ng 3/4 tasang asukal. Kalahati lang ang lulutuin. Ilan ang asukal?"
+   },
+   "options": [
+    "3/8 cup",
+    "1/4 cup",
+    "3/2 cup",
+    "1/2 cup"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Half of 3/4 is 3/4 × 1/2.",
+    "fil": "Ang kalahati ng 3/4 ay 3/4 × 1/2."
+   },
+   "mis": {
+    "1": "unknown",
+    "2": "frac-divide-noflip",
+    "3": "unknown"
+   }
+  },
+  "alg-1": {
+   "skill": "algebraic",
+   "prompt": {
+    "en": "Simplify 3x + 2x",
+    "fil": "Pasimplehin ang 3x + 2x"
+   },
+   "options": [
+    "5x",
+    "5x²",
+    "6x",
+    "3x + 2"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "3 apples + 2 apples.",
+    "fil": "3 mansanas + 2 mansanas."
+   },
+   "mis": {
+    "1": "unknown",
+    "2": "unknown"
+   }
+  },
+  "alg-2": {
+   "skill": "algebraic",
+   "prompt": {
+    "en": "Simplify 3x + 2",
+    "fil": "Pasimplehin ang 3x + 2"
+   },
+   "options": [
+    "5x",
+    "3x + 2",
+    "5",
+    "6x"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Can you add apples and plain numbers?",
+    "fil": "Puwede bang pagsamahin ang mansanas at numero lang?"
+   },
+   "mis": {
+    "0": "alg-unlike",
+    "2": "alg-unlike",
+    "3": "alg-unlike"
+   }
+  },
+  "alg-3": {
+   "skill": "algebraic",
+   "prompt": {
+    "en": "Expand 2(x + 3)",
+    "fil": "I-expand ang 2(x + 3)"
+   },
+   "options": [
+    "2x + 3",
+    "2x + 6",
+    "x + 6",
+    "2x + 5"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "The 2 multiplies everything inside.",
+    "fil": "Mumultiplahin ng 2 ang lahat ng nasa loob."
+   },
+   "mis": {
+    "0": "alg-distribute",
+    "2": "alg-distribute",
+    "3": "unknown"
+   }
+  },
+  "alg-4": {
+   "skill": "algebraic",
+   "prompt": {
+    "en": "2a − b when a = 3, b = −4",
+    "fil": "2a − b kung a = 3, b = −4"
+   },
+   "options": [
+    "2",
+    "10",
+    "−2",
+    "14"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Minus a negative becomes plus.",
+    "fil": "Ang minus ng negative ay nagiging plus."
+   },
+   "mis": {
+    "0": "int-sign",
+    "2": "int-sign"
+   }
+  },
+  "alg-5": {
+   "skill": "algebraic",
+   "prompt": {
+    "en": "Simplify x/2 + x/3",
+    "fil": "Pasimplehin ang x/2 + x/3"
+   },
+   "options": [
+    "2x/5",
+    "5x/6",
+    "x/5",
+    "x/6"
+   ],
+   "answer": 1,
+   "hint": {
+    "en": "Same as 1/2 + 1/3, with x on top.",
+    "fil": "Katulad ng 1/2 + 1/3, may x sa itaas."
+   },
+   "mis": {
+    "0": "frac-add-across",
+    "2": "frac-add-across",
+    "3": "unknown"
+   }
+  },
+  "lin-1": {
+   "skill": "linear",
+   "prompt": {
+    "en": "x + 5 = 12. x = ?",
+    "fil": "x + 5 = 12. x = ?"
+   },
+   "options": [
+    "7",
+    "17",
+    "−7",
+    "60"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Take 5 from both sides.",
+    "fil": "Bawasan ng 5 ang magkabilang panig."
+   },
+   "mis": {
+    "1": "lin-move-sign",
+    "2": "int-sign"
+   }
+  },
+  "lin-2": {
+   "skill": "linear",
+   "prompt": {
+    "en": "3x = 18. x = ?",
+    "fil": "3x = 18. x = ?"
+   },
+   "options": [
+    "6",
+    "15",
+    "54",
+    "21"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Divide both sides by 3.",
+    "fil": "Hatiin sa 3 ang magkabilang panig."
+   },
+   "mis": {
+    "1": "lin-move-sign",
+    "2": "unknown"
+   }
+  },
+  "lin-3": {
+   "skill": "linear",
+   "prompt": {
+    "en": "x/3 = 4. x = ?",
+    "fil": "x/3 = 4. x = ?"
+   },
+   "options": [
+    "12",
+    "4/3",
+    "1",
+    "7"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Undo “divide by 3” with “times 3”.",
+    "fil": "I-undo ang “hatiin sa 3” gamit ang “times 3”."
+   },
+   "mis": {
+    "1": "lin-frac-coef",
+    "2": "unknown",
+    "3": "lin-move-sign"
+   }
+  },
+  "lin-4": {
+   "skill": "linear",
+   "prompt": {
+    "en": "2x + 3 = 11. x = ?",
+    "fil": "2x + 3 = 11. x = ?"
+   },
+   "options": [
+    "4",
+    "7",
+    "8",
+    "5.5"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Remove the 3 first, then divide by 2.",
+    "fil": "Alisin muna ang 3, saka hatiin sa 2."
+   },
+   "mis": {
+    "1": "lin-move-sign",
+    "2": "lin-divide-one-side",
+    "3": "unknown"
+   }
+  },
+  "lin-5": {
+   "skill": "linear",
+   "prompt": {
+    "en": "(1/2)x + 1 = 4. x = ?",
+    "fil": "(1/2)x + 1 = 4. x = ?"
+   },
+   "options": [
+    "6",
+    "3/2",
+    "5/2",
+    "8"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Get (1/2)x = 3, then times 2.",
+    "fil": "Gawing (1/2)x = 3, saka times 2."
+   },
+   "mis": {
+    "1": "lin-frac-coef",
+    "2": "lin-move-sign",
+    "3": "unknown"
+   }
+  },
+  "int-1": {
+   "skill": "integers",
+   "prompt": {
+    "en": "−3 + 7 = ?",
+    "fil": "−3 + 7 = ?"
+   },
+   "options": [
+    "4",
+    "−10",
+    "10",
+    "−4"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Start at −3 and walk 7 steps right.",
+    "fil": "Magsimula sa −3 at humakbang ng 7 pakanan."
+   },
+   "mis": {
+    "1": "int-sign",
+    "2": "int-sign",
+    "3": "int-sign"
+   }
+  },
+  "int-2": {
+   "skill": "integers",
+   "prompt": {
+    "en": "5 − (−2) = ?",
+    "fil": "5 − (−2) = ?"
+   },
+   "options": [
+    "7",
+    "3",
+    "−7",
+    "−3"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Taking away a debt adds money.",
+    "fil": "Kapag inalis ang utang, nadadagdagan ang pera."
+   },
+   "mis": {
+    "1": "int-sign",
+    "2": "int-sign",
+    "3": "int-sign"
+   }
+  },
+  "int-3": {
+   "skill": "integers",
+   "prompt": {
+    "en": "(−4) × (−3) = ?",
+    "fil": "(−4) × (−3) = ?"
+   },
+   "options": [
+    "12",
+    "−12",
+    "−7",
+    "7"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Two negatives multiply to a positive.",
+    "fil": "Positive ang negative × negative."
+   },
+   "mis": {
+    "1": "int-mult-sign",
+    "2": "unknown",
+    "3": "unknown"
+   }
+  },
+  "dec-1": {
+   "skill": "decimals",
+   "prompt": {
+    "en": "0.5 + 0.25 = ?",
+    "fil": "0.5 + 0.25 = ?"
+   },
+   "options": [
+    "0.75",
+    "0.30",
+    "0.525",
+    "7.5"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Line up the decimal points: 0.50 + 0.25.",
+    "fil": "Ihanay ang decimal point: 0.50 + 0.25."
+   },
+   "mis": {
+    "1": "dec-place",
+    "2": "unknown",
+    "3": "dec-place"
+   }
+  },
+  "dec-2": {
+   "skill": "decimals",
+   "prompt": {
+    "en": "Write 3/4 as a decimal",
+    "fil": "Isulat ang 3/4 bilang decimal"
+   },
+   "options": [
+    "0.75",
+    "0.34",
+    "3.4",
+    "0.43"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "3/4 = 75/100.",
+    "fil": "3/4 = 75/100."
+   },
+   "mis": {
+    "1": "unknown",
+    "2": "unknown"
+   }
+  },
+  "dec-3": {
+   "skill": "decimals",
+   "prompt": {
+    "en": "1.2 × 0.3 = ?",
+    "fil": "1.2 × 0.3 = ?"
+   },
+   "options": [
+    "0.36",
+    "3.6",
+    "0.036",
+    "36"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "12 × 3 = 36, then count 2 decimal places.",
+    "fil": "12 × 3 = 36, saka bilangin ang 2 decimal place."
+   },
+   "mis": {
+    "1": "dec-place",
+    "2": "dec-place",
+    "3": "dec-place"
+   }
+  },
+  "rat-1": {
+   "skill": "ratio",
+   "prompt": {
+    "en": "12 girls, 18 boys. Girls to boys?",
+    "fil": "12 babae, 18 lalaki. Babae sa lalaki?"
+   },
+   "options": [
+    "2:3",
+    "3:2",
+    "12:30",
+    "1:2"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Keep the order. Divide both by 6.",
+    "fil": "Panatilihin ang ayos. Hatiin pareho sa 6."
+   },
+   "mis": {
+    "1": "ratio-order",
+    "2": "unknown"
+   }
+  },
+  "rat-2": {
+   "skill": "ratio",
+   "prompt": {
+    "en": "3 pencils cost ₱24. 5 pencils cost?",
+    "fil": "₱24 ang 3 lapis. Magkano ang 5?"
+   },
+   "options": [
+    "₱40",
+    "₱26",
+    "₱72",
+    "₱15"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Find one pencil first.",
+    "fil": "Alamin muna ang presyo ng isa."
+   },
+   "mis": {
+    "1": "unknown",
+    "2": "unknown"
+   }
+  },
+  "rat-3": {
+   "skill": "ratio",
+   "prompt": {
+    "en": "2/5 = x/20. x = ?",
+    "fil": "2/5 = x/20. x = ?"
+   },
+   "options": [
+    "8",
+    "17",
+    "4",
+    "10"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "5 became 20, so 2 becomes…",
+    "fil": "Naging 20 ang 5, kaya ang 2 ay magiging…"
+   },
+   "mis": {
+    "1": "unknown",
+    "2": "unknown"
+   }
+  },
+  "geo-1": {
+   "skill": "geometry",
+   "prompt": {
+    "en": "Square, side 5 cm. Perimeter?",
+    "fil": "Parisukat, gilid 5 cm. Perimeter?"
+   },
+   "options": [
+    "20 cm",
+    "25 cm",
+    "10 cm",
+    "5 cm"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Walk around all 4 sides.",
+    "fil": "Ikutin ang 4 na gilid."
+   },
+   "mis": {
+    "1": "geo-area-perimeter"
+   }
+  },
+  "geo-2": {
+   "skill": "geometry",
+   "prompt": {
+    "en": "Angles in a triangle add up to?",
+    "fil": "Ilan ang kabuuan ng anggulo ng tatsulok?"
+   },
+   "options": [
+    "180°",
+    "360°",
+    "90°",
+    "270°"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Tear off the corners: they make a straight line.",
+    "fil": "Punitin ang mga sulok: tuwid na linya ang mabubuo."
+   },
+   "mis": {
+    "1": "unknown"
+   }
+  },
+  "geo-3": {
+   "skill": "geometry",
+   "prompt": {
+    "en": "Rectangle 4 cm by 6 cm. Area?",
+    "fil": "Parihaba 4 cm by 6 cm. Area?"
+   },
+   "options": [
+    "24 cm²",
+    "20 cm²",
+    "10 cm²",
+    "48 cm²"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Count the 1 cm squares inside.",
+    "fil": "Bilangin ang 1 cm na parisukat sa loob."
+   },
+   "mis": {
+    "1": "geo-area-perimeter",
+    "2": "unknown"
+   }
+  },
+  "mea-1": {
+   "skill": "measurement",
+   "prompt": {
+    "en": "2.5 m = ? cm",
+    "fil": "2.5 m = ? cm"
+   },
+   "options": [
+    "250",
+    "25",
+    "2,500",
+    "0.25"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "1 m = 100 cm.",
+    "fil": "1 m = 100 cm."
+   },
+   "mis": {
+    "1": "meas-unit",
+    "2": "meas-unit"
+   }
+  },
+  "mea-2": {
+   "skill": "measurement",
+   "prompt": {
+    "en": "90 minutes = ? hours",
+    "fil": "90 minuto = ? oras"
+   },
+   "options": [
+    "1.5",
+    "1.3",
+    "0.9",
+    "9"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "An hour has 60 minutes, not 100.",
+    "fil": "60 minuto ang isang oras, hindi 100."
+   },
+   "mis": {
+    "1": "meas-unit",
+    "2": "meas-unit"
+   }
+  },
+  "sta-1": {
+   "skill": "statistics",
+   "prompt": {
+    "en": "Mean of 4, 6, 8?",
+    "fil": "Mean ng 4, 6, 8?"
+   },
+   "options": [
+    "6",
+    "18",
+    "4",
+    "8"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Add them, then divide by how many.",
+    "fil": "Pagsamahin, saka hatiin sa dami."
+   },
+   "mis": {
+    "1": "unknown"
+   }
+  },
+  "sta-2": {
+   "skill": "statistics",
+   "prompt": {
+    "en": "Median of 3, 9, 4, 7, 5?",
+    "fil": "Median ng 3, 9, 4, 7, 5?"
+   },
+   "options": [
+    "5",
+    "4",
+    "7",
+    "5.6"
+   ],
+   "answer": 0,
+   "hint": {
+    "en": "Sort them first.",
+    "fil": "Pagsunud-sunurin muna."
+   },
+   "mis": {
+    "1": "stat-median-sort",
+    "3": "stat-mean-median"
+   }
+  }
+ },
+ "skills": {
+  "integers": {
+   "en": "Integers",
+   "fil": "Integers"
+  },
+  "geometry": {
+   "en": "Geometry Basics",
+   "fil": "Batayang Geometry"
+  },
+  "fractions": {
+   "en": "Fractions",
+   "fil": "Fractions"
+  },
+  "decimals": {
+   "en": "Decimals",
+   "fil": "Decimals"
+  },
+  "ratio": {
+   "en": "Ratio & Proportion",
+   "fil": "Ratio at Proporsyon"
+  },
+  "algebraic": {
+   "en": "Algebraic Expressions",
+   "fil": "Algebraic Expressions"
+  },
+  "measurement": {
+   "en": "Measurement",
+   "fil": "Pagsukat"
+  },
+  "statistics": {
+   "en": "Statistics",
+   "fil": "Estadistika"
+  },
+  "linear": {
+   "en": "Linear Equations",
+   "fil": "Linear Equations"
+  }
+ }
+}

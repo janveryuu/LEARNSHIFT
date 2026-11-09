@@ -81,7 +81,10 @@ export default function Quiz() {
     setPicked(i);
     const correct = i === q.answer;
     const s = useAppStore.getState();
-    s.answer({ skill: q.skill, correct, seconds: (Date.now() - started.current) / 1000, hints: showHint ? 1 : 0 });
+    s.answer(
+      { skill: q.skill, correct, seconds: (Date.now() - started.current) / 1000, hints: showHint ? 1 : 0 },
+      { questionId: q.id, chosen: i, context: 'quiz' },
+    );
     const nextLevel = Math.max(1, Math.min(5, level + (correct ? 1 : -1)));
     if (nextLevel !== level) setLevelMsg(t.quiz.levelChange(level, nextLevel));
     setLevel(nextLevel);

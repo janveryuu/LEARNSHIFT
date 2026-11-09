@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   FadeIn,
@@ -23,6 +23,7 @@ import { radius, space } from '@/design/tokens';
 import { reasonText, useLive } from '@/hooks/useLive';
 import { formatClock, useT } from '@/i18n/useT';
 import { interventionPolicy } from '@/services/ai/interventionPolicy';
+import { IS_PITCH } from '@/lib/config';
 import { useAppStore } from '@/store/useAppStore';
 import { useSession } from '@/store/useSession';
 
@@ -39,6 +40,11 @@ const CLIPS: { colors: [string, string, string]; user: string }[] = [
 const TARGET = 45;
 
 export default function Simulate() {
+  if (!IS_PITCH) return <Redirect href="/home" />;
+  return <SimulateDemo />;
+}
+
+function SimulateDemo() {
   const t = useT();
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();

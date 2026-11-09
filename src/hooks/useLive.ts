@@ -6,8 +6,10 @@ import type { Strings } from '@/i18n/en';
 import { gapEngine } from '@/services/ai/gapEngine';
 import { levelFor, riskModel } from '@/services/ai/riskModel';
 import type { RiskReason, RiskResult, UsageFeatures } from '@/services/types';
+import { IS_PITCH } from '@/lib/config';
+import { useDevice } from '@/services/monitor/bridge';
 import { usageProvider } from '@/services/usage/MockUsageProvider';
-import { inWindow, nowMinutes, useAppStore } from '@/store/useAppStore';
+import { inWindow, nowMinutes, todayKey, useAppStore } from '@/store/useAppStore';
 import { useSession } from '@/store/useSession';
 
 export type Live = {
@@ -44,22 +46,37 @@ export function useLive(): Live {
   const mastery = useAppStore((s) => s.mastery);
   const limitStyle = useAppStore((s) => s.guardian.limitStyle);
   const simMinutes = useSession((s) => s.simMinutes);
+  const device = useDevice((s) => s.live);
+  const usage = useAppStore((s) => s.usage);
 
   return useMemo(() => {
     const weekday = new Date().getDay();
     const schoolDay = demo.schoolDay ?? (weekday >= 1 && weekday <= 5);
     const inBedtime = inWindow(clock, bedtime);
-    const features = usageProvider.live({ clock, schoolDay, inBedtime, simMinutes });
+    const today = usage.find((u) => u.day === todayKey());
+    const features: UsageFeatures = IS_PITCH
+      ? usageProvider.live({ clock, schoolDay, inBedtime, simMinutes })
+      : {
+          clock,
+          sessionMinutes: device?.sessionMinutes ?? 0,
+          category: device?.category ?? 'other',
+          unlocksLastHour: device?.unlocksLastHour ?? 0,
+          minutesSinceBreak: device?.sessionMinutes ?? 0,
+          schoolDay,
+          inBedtime,
+        };
     let risk = riskModel.score(features);
     if (demo.risk != null) risk = { ...risk, risk: demo.risk, level: levelFor(demo.risk, risk.lateNight) };
 
     const base = schoolDay ? 180 : 240;
     const capMinutes = limitStyle === 'fixed' ? base : Math.max(60, round15(base * (1.15 - 0.5 * risk.risk)));
-    const usedMinutes = usageProvider.week(new Date())[6].minutes + Math.round(simMinutes);
+    const usedMinutes = IS_PITCH
+      ? usageProvider.week(new Date())[6].minutes + Math.round(simMinutes)
+      : (today?.total ?? 0);
     const root = gapEngine.rootGap(mastery);
     const blocked = gapEngine.blocked(mastery, root);
     return { clock, schoolDay, inBedtime, features, risk, capMinutes, usedMinutes, root, blocked };
-  }, [clock, demo.schoolDay, demo.risk, bedtime, mastery, limitStyle, simMinutes]);
+  }, [clock, demo.schoolDay, demo.risk, bedtime, mastery, limitStyle, simMinutes, device, usage]);
 }
 
 /** Localized chip text for one risk-model reason. */

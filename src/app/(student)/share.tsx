@@ -5,10 +5,11 @@ import { ShareNetwork } from 'phosphor-react-native';
 
 import { Tarsi } from '@/components/mascot/Tarsi';
 import { BarChart, PillButton, Ring, SheetHeader, Text } from '@/components/ui';
-import { MIKA_HISTORY } from '@/data/skills';
+import { gapEngine } from '@/services/ai/gapEngine';
+import { IS_PITCH } from '@/lib/config';
 import { useTheme } from '@/design/theme';
 import { radius, space } from '@/design/tokens';
-import { useWeek, weeklyGrade } from '@/hooks/useWeek';
+import { useWeek, weeklyGrade, masteryGain } from '@/hooks/useWeek';
 import { formatDuration, useT } from '@/i18n/useT';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -19,11 +20,13 @@ export default function ShareCard() {
   const insets = useSafeAreaInsets();
   const week = useWeek();
   const mastery = useAppStore((s) => s.mastery);
+  const history = useAppStore((s) => s.history);
+  const focus = IS_PITCH ? 'fractions' : gapEngine.rootGap(mastery);
   const { score, grade } = weeklyGrade(
     week.breaks,
     week.breakTarget,
     week.lateMinutes,
-    mastery.fractions - MIKA_HISTORY.fractions[0],
+    masteryGain(mastery[focus], history[focus] ?? []),
   );
   const body = t.insights.shareBody(formatDuration(week.avgMinutes), formatDuration(week.dropMinutes), grade);
 

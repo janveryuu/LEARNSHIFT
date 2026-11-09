@@ -18,11 +18,13 @@ import {
   Text,
 } from '@/components/ui';
 import { heatmapMonths, seedHeatmap } from '@/data/seed';
-import { MIKA_HISTORY } from '@/data/skills';
+import { SHORT } from '@/data/skills';
+import { IS_PITCH } from '@/lib/config';
+import { gapEngine } from '@/services/ai/gapEngine';
 import { useTheme } from '@/design/theme';
 import { space } from '@/design/tokens';
-import { useWeek, weeklyGrade } from '@/hooks/useWeek';
-import { formatDuration, useT } from '@/i18n/useT';
+import { useWeek, weeklyGrade, learnHeatmap, masteryGain } from '@/hooks/useWeek';
+import { formatDuration, useT, useL } from '@/i18n/useT';
 import { useAppStore } from '@/store/useAppStore';
 
 const WEEKS = 22;
@@ -30,11 +32,14 @@ const WEEKS = 22;
 export default function Insights() {
   const { c } = useTheme();
   const t = useT();
+  const L = useL();
   const week = useWeek();
   const mastery = useAppStore((s) => s.mastery);
   const feed = useAppStore((s) => s.feed);
   const nudges = useAppStore((s) => s.nudges);
-  const heat = useMemo(() => seedHeatmap(WEEKS), []);
+  const learnDays = useAppStore((s) => s.learnDays);
+  const history = useAppStore((s) => s.history);
+  const heat = useMemo(() => (IS_PITCH ? seedHeatmap(WEEKS) : learnHeatmap(learnDays, WEEKS)), [learnDays]);
   const months = useMemo(() => heatmapMonths(WEEKS, t.months), [t.months]);
 
   // Learning days this month = non-zero cells in the current month.
@@ -44,7 +49,9 @@ export default function Insights() {
     return heat.slice(lastIndex - today.getDate() + 1, lastIndex + 1).filter((v) => v > 0).length;
   }, [heat]);
 
-  const masteryUp = mastery.fractions - MIKA_HISTORY.fractions[0];
+  // The demo tracks Fractions; real accounts track their current root gap.
+  const focus = IS_PITCH ? 'fractions' : gapEngine.rootGap(mastery);
+  const masteryUp = masteryGain(mastery[focus], history[focus] ?? []);
   const { score, grade } = weeklyGrade(week.breaks, week.breakTarget, week.lateMinutes, masteryUp);
   const todayIdx = 6;
   const labels = week.days.map((d) => t.days.long[d.weekday]);
@@ -123,10 +130,10 @@ export default function Insights() {
           label={t.insights.mastery}
           value={`+${Math.round(masteryUp * 100)}`}
           unit="%"
-          caption={t.insights.fractionsUp}
+          caption={t.insights.fractionsUp(L(SHORT[focus]))}
           icon={<Sparkle size={16} weight="fill" color={c.success} />}
           style={styles.flex}
-          onPress={() => router.push({ pathname: '/skill/[id]', params: { id: 'fractions' } })}
+          onPress={() => router.push({ pathname: '/skill/[id]', params: { id: focus } })}
         />
         <StatTile
           label={t.insights.feed}
