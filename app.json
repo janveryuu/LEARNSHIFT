@@ -38,6 +38,17 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "37b7ce87-f558-4b93-9e85-d3d0ccd4927b"
+      }
+    },
+    "owner": "janveryu1"
   }
 }
