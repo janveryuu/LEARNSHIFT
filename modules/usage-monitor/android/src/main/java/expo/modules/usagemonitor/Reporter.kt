@@ -19,6 +19,7 @@ object Reporter {
     if (cfg.url.isEmpty() || cfg.deviceToken.isEmpty()) return false
     val queue = Store.queue(ctx)
     val usage = JSONArray()
+    val apps = JSONArray()
     if (withUsage && Perms.hasUsageAccess(ctx)) {
       for (d in 0..1) {
         val s = runCatching { Days.summary(ctx, d, cfg) }.getOrNull() ?: continue
@@ -34,6 +35,17 @@ object Reporter {
             .put("unlocks", s.unlocks)
             .put("off_at", s.offAt ?: JSONObject.NULL),
         )
+        // The 25 apps used most that day, at least a minute each.
+        s.apps.entries.sortedByDescending { it.value }.filter { it.value >= 60_000L }.take(25).forEach { (pkg, ms) ->
+          apps.put(
+            JSONObject()
+              .put("day", s.day)
+              .put("package", pkg)
+              .put("label", Categories.label(ctx, pkg))
+              .put("category", Categories.of(ctx, pkg).js)
+              .put("minutes", (ms / 60_000L).toInt()),
+          )
+        }
       }
     }
     if (queue.length() == 0 && usage.length() == 0) return true
@@ -43,8 +55,22 @@ object Reporter {
       val e = queue.optJSONObject(i) ?: continue
       sent[e.optString("client_id")] = e.toString()
     }
-    val body = JSONObject().put("platform", "android").put("events", queue).put("usage", usage)
+    val body = JSONObject().put("platform", "android").put("events", queue).put("usage", usage).put("apps", apps)
+    val ok = post(cfg, body)
+    if (ok) {
+      Store.removeSent(ctx, sent)
+      Store.putLong(ctx, "lastReport", System.currentTimeMillis())
+    }
+    return ok
+  }
 
+  /** The app in front right now, for the guardian's "Using now". */
+  fun live(ctx: Context, cfg: Config, live: JSONObject): Boolean {
+    if (cfg.url.isEmpty() || cfg.deviceToken.isEmpty()) return false
+    return post(cfg, JSONObject().put("platform", "android").put("live", live))
+  }
+
+  private fun post(cfg: Config, body: JSONObject): Boolean {
     return try {
       val conn = (URL("${cfg.url.trimEnd('/')}/functions/v1/ingest").openConnection() as HttpURLConnection).apply {
         requestMethod = "POST"
@@ -59,8 +85,6 @@ object Reporter {
       val code = conn.responseCode
       conn.disconnect()
       if (code in 200..299) {
-        Store.removeSent(ctx, sent)
-        Store.putLong(ctx, "lastReport", System.currentTimeMillis())
         true
       } else {
         Log.w(TAG, "ingest returned $code")

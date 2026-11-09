@@ -189,6 +189,20 @@ try {
   ok(mon.length === 1 && mon[0].source === 'android', 'guardian sees the monitor nudge');
   const u2 = await rows(guardian.c.from('usage_daily').select('total_min').eq('student_id', student.id).single());
   ok(u2.total_min === 150, 'monitor usage overwrites the day');
+  const appsRes = await ingest(dt, {
+    platform: 'android',
+    apps: [{ day, package: 'com.zhiliaoapp.musically', label: 'TikTok', category: 'video', minutes: 42 }],
+    live: { package: 'com.zhiliaoapp.musically', label: 'TikTok', category: 'video', session_min: 7, screen_on: true },
+  });
+  const ab = await appsRes.json();
+  ok(appsRes.ok && ab.apps === 1 && ab.live, 'monitor reports per-app minutes and the app in use', ab);
+  ok((await rows(guardian.c.from('app_usage').select('*').eq('student_id', student.id))).length === 1, 'guardian sees per-app minutes');
+  ok((await rows(guardian.c.from('live_status').select('*').eq('student_id', student.id))).length === 1, 'guardian sees the app in use');
+  ok((await rows(teacher.c.from('app_usage').select('*').eq('student_id', student.id))).length === 0, 'teacher cannot see per-app minutes');
+  ok((await rows(teacher.c.from('live_status').select('*').eq('student_id', student.id))).length === 0, 'teacher cannot see the app in use');
+  ok((await rows(stranger.c.from('app_usage').select('*').eq('student_id', student.id))).length === 0, 'stranger cannot see per-app minutes');
+  const { error: selfApps } = await student.c.from('app_usage').insert({ student_id: student.id, day, package: 'x', label: 'x', category: 'other', minutes: 1 });
+  ok(!!selfApps, 'apps can only be written by the phone monitor');
 
   console.log('Gemini tutor');
   const t0 = Date.now();

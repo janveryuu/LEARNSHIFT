@@ -18,6 +18,10 @@ type UsageDay = {
   off_at?: number | null;
 };
 
+type AppRow = { day: string; package: string; label: string; category: string; minutes: number };
+type Live = { package?: string | null; label?: string | null; category?: string | null; session_min?: number; screen_on?: boolean };
+
+const CATS = new Set(['video', 'social', 'games', 'study', 'other']);
 const LEVELS = new Set(['checkin', 'break', 'winddown', 'lock']);
 const RESPONSES = new Set(['took', 'snoozed', 'followed', 'locked', 'requested', 'quiet']);
 const int = (v: unknown, max: number) => Math.max(0, Math.min(max, Math.round(Number(v) || 0)));
@@ -27,7 +31,7 @@ serve(async (req) => {
   if (!/^[0-9a-f]{64}$/.test(token)) throw new HttpError(401, 'Unknown device');
   const { data: studentId } = await admin.rpc('device_student', { p_token: token });
   if (!studentId) throw new HttpError(401, 'Unknown device');
-  if (!(await rateTake(studentId, 'ingest', 120, 3600))) throw new HttpError(429, 'Slow down');
+  if (!(await rateTake(studentId, 'ingest', 400, 3600))) throw new HttpError(429, 'Slow down');
 
   const body = await req.json().catch(() => ({}));
   const source = body.platform === 'ios' ? 'ios' : 'android';
@@ -89,6 +93,39 @@ serve(async (req) => {
     if (error) throw error;
   }
 
+  // Per-app minutes (guardians see these; teachers never do).
+  const apps: AppRow[] = Array.isArray(body.apps) ? body.apps.slice(0, 80) : [];
+  const appRows = apps
+    .filter((a) => /^\d{4}-\d{2}-\d{2}$/.test(a.day) && typeof a.package === 'string' && a.package.length > 0)
+    .map((a) => ({
+      student_id: studentId,
+      day: a.day,
+      package: a.package.slice(0, 200),
+      label: String(a.label || a.package).slice(0, 80),
+      category: CATS.has(a.category) ? a.category : 'other',
+      minutes: int(a.minutes, 1440),
+      updated_at: new Date().toISOString(),
+    }));
+  if (appRows.length) {
+    const { error } = await admin.from('app_usage').upsert(appRows, { onConflict: 'student_id,day,package' });
+    if (error) throw error;
+  }
+
+  // The app in front right now.
+  const live: Live | null = body.live && typeof body.live === 'object' ? body.live : null;
+  if (live) {
+    const { error } = await admin.from('live_status').upsert({
+      student_id: studentId,
+      package: live.package ? String(live.package).slice(0, 200) : null,
+      label: live.label ? String(live.label).slice(0, 80) : null,
+      category: live.category && CATS.has(live.category) ? live.category : null,
+      session_min: int(live.session_min, 1440),
+      screen_on: !!live.screen_on,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) throw error;
+  }
+
   // A fresh wind-down after bedtime tells the guardians (once per night).
   let alerted = false;
   const late = events.find(
@@ -96,5 +133,5 @@ serve(async (req) => {
   );
   if (late) alerted = await lateNightAlert(studentId, int(late.clock, 1439), int(late.late, 600));
 
-  return json({ events: nudgeRows.length, usage: usageRows.length, alerted });
+  return json({ events: nudgeRows.length, usage: usageRows.length, apps: appRows.length, live: !!live, alerted });
 });

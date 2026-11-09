@@ -12,8 +12,20 @@ import { todayKey, type BedtimeDays, type TimeRequest, type UsageDay } from '@/s
 import { useAuth } from '@/store/useAuth';
 
 export type Child = { id: string; name: string; grade: number | null };
+export type AppCategory = 'video' | 'social' | 'games' | 'study' | 'other';
+export type AppDay = { day: string; package: string; label: string; category: AppCategory; minutes: number };
+export type LiveNow = {
+  package: string | null;
+  label: string | null;
+  category: AppCategory | null;
+  sessionMin: number;
+  screenOn: boolean;
+  updatedAt: string;
+};
 export type ChildData = {
   usage: UsageDay[];
+  apps: AppDay[];
+  live: LiveNow | null;
   nudges: NudgeEntry[];
   requests: TimeRequest[];
   controls: {
@@ -75,14 +87,22 @@ export async function loadChildren() {
 
 export async function loadChild(id: string) {
   const since = todayKey(new Date(Date.now() - 13 * DAY_MS));
-  const [usage, nudges, requests, controls, settings] = await Promise.all([
+  const [usage, nudges, requests, controls, settings, apps, live] = await Promise.all([
     supabase.from('usage_daily').select('*').eq('student_id', id).gte('day', since).order('day'),
     supabase.from('nudge_events').select('*').eq('student_id', id).order('at', { ascending: false }).limit(40),
     supabase.from('time_requests').select('*').eq('student_id', id).order('created_at', { ascending: false }).limit(20),
     supabase.from('guardian_controls').select('*').eq('student_id', id).maybeSingle(),
     supabase.from('student_settings').select('*').eq('student_id', id).maybeSingle(),
+    supabase
+      .from('app_usage')
+      .select('day, package, label, category, minutes')
+      .eq('student_id', id)
+      .gte('day', todayKey(new Date(Date.now() - 6 * DAY_MS)))
+      .order('minutes', { ascending: false })
+      .limit(400),
+    supabase.from('live_status').select('*').eq('student_id', id).maybeSingle(),
   ]);
-  const err = [usage, nudges, requests, controls, settings].find((r) => r.error)?.error;
+  const err = [usage, nudges, requests, controls, settings, apps, live].find((r) => r.error)?.error;
   if (err) {
     useGuardian.setState({ error: err.message });
     return;
@@ -103,6 +123,17 @@ export async function loadChild(id: string) {
       sessions: u.sessions,
       unlocks: u.unlocks,
     })),
+    apps: (apps.data ?? []) as AppDay[],
+    live: live.data
+      ? {
+          package: live.data.package,
+          label: live.data.label,
+          category: live.data.category,
+          sessionMin: live.data.session_min,
+          screenOn: live.data.screen_on,
+          updatedAt: live.data.updated_at,
+        }
+      : null,
     nudges: (nudges.data ?? []).map((n) => ({
       id: n.client_id,
       at: n.at,
@@ -156,8 +187,13 @@ export function useGuardianLive() {
 
   useEffect(() => {
     if (!selected) return;
-    const reload = () => loadChild(selected);
-    reload();
+    let t: ReturnType<typeof setTimeout> | null = null;
+    // A report updates many rows at once; reload once per burst.
+    const reload = () => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => loadChild(selected), 400);
+    };
+    loadChild(selected);
     const f = `student_id=eq.${selected}`;
     const ch = supabase
       .channel(`guardian-child-${selected}`)
@@ -166,6 +202,8 @@ export function useGuardianLive() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'nudge_events', filter: f }, reload)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'guardian_controls', filter: f }, reload)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'student_settings', filter: f }, reload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_usage', filter: f }, reload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'live_status', filter: f }, reload)
       .subscribe();
     const app = AppState.addEventListener('change', (st) => {
       if (st === 'active') {
@@ -174,6 +212,7 @@ export function useGuardianLive() {
       }
     });
     return () => {
+      if (t) clearTimeout(t);
       supabase.removeChannel(ch);
       app.remove();
     };

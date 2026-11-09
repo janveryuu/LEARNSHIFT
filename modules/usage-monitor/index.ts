@@ -22,12 +22,22 @@ type UsageMonitorNative = {
   openBatterySettings(): void;
   openAppSettings(): void;
   deviceBrand(): string;
+  /** Missing on APKs built before this was added. */
+  notificationsEnabled?(): boolean;
+  openNotificationSettings?(): void;
   configure(json: string): boolean;
   isRunning(): boolean;
   getLive(): Promise<LiveSession | null>;
   getDays(count: number): Promise<NativeDay[]>;
   reportNow(): Promise<boolean>;
-  status(): { running: boolean; queued: number; lastReport: number; lastNudge: number };
+  status(): {
+    running: boolean;
+    queued: number;
+    lastReport: number;
+    lastNudge: number;
+    lastNotifyFailed: number;
+    notifications: boolean;
+  };
   testNudge(level: 'checkin' | 'break' | 'winddown' | 'lock'): boolean;
   lastConfig(): string;
 };

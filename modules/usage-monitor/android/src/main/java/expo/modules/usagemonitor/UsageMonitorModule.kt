@@ -62,6 +62,19 @@ class UsageMonitorModule : Module() {
 
     Function("deviceBrand") { "${Build.MANUFACTURER}".lowercase() }
 
+    /** True when break reminders can actually pop up on this phone. */
+    Function("notificationsEnabled") { Notifier.breaksEnabled(ctx) }
+
+    Function("openNotificationSettings") {
+      try {
+        launch(
+          Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName),
+        )
+      } catch (_: Exception) {
+        launch(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${ctx.packageName}")))
+      }
+    }
+
     /** Saves the config and starts or stops the background monitor to match. */
     Function("configure") { json: String ->
       Store.saveConfig(ctx, json)
@@ -116,6 +129,8 @@ class UsageMonitorModule : Module() {
         "queued" to q.length(),
         "lastReport" to Store.getLong(ctx, "lastReport"),
         "lastNudge" to Store.getLong(ctx, "lastNudge"),
+        "lastNotifyFailed" to Store.getLong(ctx, "lastNotifyFailed"),
+        "notifications" to Notifier.breaksEnabled(ctx),
       )
     }
 

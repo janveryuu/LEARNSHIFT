@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, View } from 'react-native';
-import { AppWindow, BatteryCharging, CheckCircle, Eye, Stack } from 'phosphor-react-native';
+import { AppWindow, BatteryCharging, BellRinging, CheckCircle, Eye, Stack } from 'phosphor-react-native';
 
 import { Card, PillButton, Text } from '@/components/ui';
 import { useTheme } from '@/design/theme';
@@ -8,6 +8,7 @@ import { radius } from '@/design/tokens';
 import { useT } from '@/i18n/useT';
 import {
   openBatterySettings,
+  openNotificationSettings,
   openOverlaySettings,
   platform,
   requestAccess,
@@ -148,6 +149,14 @@ export function MonitorSetup() {
         done={s.access}
         label={t.acct.openSettings}
         onPress={() => requestAccess()}
+      />
+      <Step
+        icon={<BellRinging size={20} weight="fill" color={c.accent} />}
+        title={t.acct.setupNotify}
+        sub={t.acct.setupNotifySub}
+        done={s.notifications}
+        label={t.acct.fix}
+        onPress={openNotificationSettings}
       />
       <Step
         icon={<Stack size={20} weight="fill" color={c.accent} />}

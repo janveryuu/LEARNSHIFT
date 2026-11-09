@@ -35,7 +35,7 @@ Phone app (Expo) ── Supabase: Auth · Postgres + row-level security · Realt
                                              └ delete-account
 ```
 
-- **Privacy:** the list of apps a student used never leaves the phone; only daily totals and nudges are uploaded. Database policies enforce who sees what, and 59 automated checks prove it.
+- **Privacy:** only minutes per app, daily totals and nudges are uploaded, never content, messages or browsing. Guardians see per-app minutes; teachers never see screen time. Database policies enforce who sees what, and 59 automated checks prove it.
 - **Offline-first:** the app works from a local copy and syncs writes when back online.
 
 ## Run it

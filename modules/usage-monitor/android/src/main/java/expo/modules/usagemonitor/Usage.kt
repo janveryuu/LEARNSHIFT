@@ -45,6 +45,17 @@ object Categories {
   )
 
   private val cache = HashMap<String, Cat>()
+  private val labels = HashMap<String, String>()
+
+  /** The app's name as shown on the home screen (e.g. "TikTok"). */
+  fun label(ctx: Context, pkg: String): String = labels.getOrPut(pkg) {
+    try {
+      val pm = ctx.packageManager
+      pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString().take(80)
+    } catch (_: Exception) {
+      pkg
+    }
+  }
 
   fun of(ctx: Context, pkg: String): Cat = cache.getOrPut(pkg) { lookup(ctx, pkg) }
 
@@ -160,6 +171,8 @@ data class DaySummary(
   val sessions: Int,
   val unlocks: Int,
   val offAt: Int?,
+  /** Package → foreground milliseconds that day. */
+  val apps: Map<String, Long> = emptyMap(),
 )
 
 object Days {
@@ -181,6 +194,7 @@ object Days {
     val to = minOf(System.currentTimeMillis(), from + 24 * 3600 * 1000L)
     val ignore = Categories.launchers(ctx) + ctx.packageName
     val ms = LongArray(Cat.values().size)
+    val perApp = HashMap<String, Long>()
     var lateMs = 0L
     var sessions = 0
     var unlocks = 0
@@ -194,6 +208,7 @@ object Days {
       if (pkg !in ignore && t > fgSince) {
         val cat = Categories.of(ctx, pkg)
         ms[cat.ordinal] += t - fgSince
+        perApp[pkg] = (perApp[pkg] ?: 0L) + (t - fgSince)
         lateMs += lateOverlap(fgSince, t, cfg)
         if (cat.distracting) lastDistracting = t
       }
@@ -238,6 +253,7 @@ object Days {
       sessions = sessions,
       unlocks = unlocks,
       offAt = offAt,
+      apps = perApp,
     )
   }
 

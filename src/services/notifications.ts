@@ -31,11 +31,6 @@ export function configureNotifications() {
       description: 'Time requests, approvals and night alerts',
       importance: AndroidImportance.HIGH,
     }).catch(() => {});
-    Notifications.setNotificationChannelAsync('nudges', {
-      name: 'Study nudges',
-      description: 'Learning breaks and wind-down reminders',
-      importance: AndroidImportance.DEFAULT,
-    }).catch(() => {});
   }
 }
 

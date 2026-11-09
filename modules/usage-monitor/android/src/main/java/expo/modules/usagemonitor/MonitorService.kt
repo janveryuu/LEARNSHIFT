@@ -85,8 +85,23 @@ class MonitorService : Service() {
     }
   }
 
+  private var launchers: Set<String>? = null
+  private var countdownShowing = false
+  private var countdownThisTick = false
+
   /** One detection pass. Returns the delay until the next pass, or -1 to stop. */
   private fun step(): Long {
+    countdownThisTick = false
+    val next = decide()
+    // Leaving the app (or a snooze, bedtime, the lock) ends the countdown.
+    if (!countdownThisTick && countdownShowing) {
+      Notifier.cancelCountdown(this)
+      countdownShowing = false
+    }
+    return next
+  }
+
+  private fun decide(): Long {
     val cfg = Store.config(this)
     if (!cfg.enabled || !Perms.hasUsageAccess(this)) return -1
     val now = System.currentTimeMillis()
@@ -100,6 +115,7 @@ class MonitorService : Service() {
     val mine = live.pkg == packageName
 
     maybeReport(cfg, now)
+    updateLive(cfg, now, live)
 
     // 1. Guardian lock: a blocked app in front during lock hours.
     if (locked && live.cat.distracting && !mine) {
@@ -146,17 +162,30 @@ class MonitorService : Service() {
     if (limit > 0) {
       val sessionStart = now - (live.sessionMin * 60_000).toLong()
       val last = Store.getLong(this, "lastLimitNudge")
-      if (live.sessionMin >= limit && (last < sessionStart || now - last >= limit * 60_000L)) {
+      // The next break is due `limit` minutes after the session started, or
+      // after the last break reminder if the student kept going.
+      val deadline = (if (last >= sessionStart) last else sessionStart) + limit * 60_000L
+      if (now >= deadline) {
+        Notifier.cancelCountdown(this)
+        countdownShowing = false
         reasons.put(JSONObject().put("key", "limit").put("value", limit))
         val id = record(cfg, "break", reasons, "quiet", clock, 0)
-        Notifier.nudge(this, cfg, "limit", id, live.cat, limit, clock, minutes)
+        if (!Notifier.nudge(this, cfg, "limit", id, live.cat, limit, clock, minutes)) {
+          Store.putLong(this, "lastNotifyFailed", now)
+        }
         Store.putLong(this, "lastLimitNudge", now)
         Store.putLong(this, "lastNudge", now)
         countNudge(now)
         reportSoon(cfg)
+        return idle
       }
+      // Live countdown in the notification bar until the break.
+      val label = live.pkg?.let { Categories.label(this, it) } ?: "Apps"
+      Notifier.countdown(this, cfg, label, limit, deadline, now)
+      countdownShowing = true
+      countdownThisTick = true
       // The guardian's limit replaces Tarsi's own timing for this kind of app.
-      return idle
+      return minOf(idle, maxOf(1_000L, deadline - now + 300L))
     }
 
     // 5. Daytime: check-in, then a learning break, with cooldowns.
@@ -174,6 +203,26 @@ class MonitorService : Service() {
     countNudge(now)
     reportSoon(cfg)
     return idle
+  }
+
+  /** Tells the guardian which app is in front now (throttled). */
+  private fun updateLive(cfg: Config, now: Long, live: Live) {
+    val home = launchers ?: Categories.launchers(this).also { launchers = it }
+    val pkg = live.pkg?.takeIf { it !in home }
+    val key = pkg ?: "-"
+    val lastAt = Store.getLong(this, "liveAt")
+    val changed = key != Store.getString(this, "liveKey")
+    // A new app is reported within seconds; a long session every 2 minutes.
+    if (!((changed && now - lastAt > 8_000L) || (pkg != null && now - lastAt > 120_000L))) return
+    Store.putString(this, "liveKey", key)
+    Store.putLong(this, "liveAt", now)
+    val body = JSONObject()
+      .put("package", pkg ?: JSONObject.NULL)
+      .put("label", pkg?.let { Categories.label(this, it) } ?: JSONObject.NULL)
+      .put("category", pkg?.let { Categories.of(this, it).js } ?: JSONObject.NULL)
+      .put("session_min", live.sessionMin.roundToInt())
+      .put("screen_on", pkg != null)
+    Thread { Reporter.live(this, cfg, body) }.start()
   }
 
   private fun record(cfg: Config, level: String, reasons: org.json.JSONArray, response: String, clock: Int, late: Int): String {

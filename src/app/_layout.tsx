@@ -15,6 +15,7 @@ import {
 
 import { ease, timing, useReducedMotion } from '@/design/motion';
 import { ThemeProvider, useTheme } from '@/design/theme';
+import { PhoneFrame, SHOW_FRAME } from '@/components/web/PhoneFrame';
 import { SessionEffects } from '@/services/backend/session';
 import { useAppStore } from '@/store/useAppStore';
 import { useAuth } from '@/store/useAuth';
@@ -22,6 +23,15 @@ import { useAuth } from '@/store/useAuth';
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
+  // Desktop web: show the app inside a phone (it runs in an embedded page).
+  if (SHOW_FRAME) {
+    SplashScreen.hideAsync().catch(() => {});
+    return <PhoneFrame />;
+  }
+  return <App />;
+}
+
+function App() {
   const [loaded, error] = useFonts({ Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold });
   const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
   const authReady = useAuth((s) => s.status !== 'loading');

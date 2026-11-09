@@ -37,6 +37,8 @@ export type MonitorStatus = {
   /** iOS only: number of apps/categories chosen to watch. */
   apps: number;
   brand: string;
+  /** Break reminders can pop up (app notifications on, channel not muted). */
+  notifications: boolean;
 };
 
 export function status(): MonitorStatus {
@@ -49,13 +51,23 @@ export function status(): MonitorStatus {
       running: UsageMonitor.isRunning(),
       apps: 0,
       brand: UsageMonitor.deviceBrand(),
+      notifications: UsageMonitor.notificationsEnabled?.() ?? true,
     };
   }
   if (platform === 'ios') {
     const s = ios.status();
-    return { platform, access: s.authorized, overlay: true, battery: true, running: s.monitoring, apps: s.apps, brand: 'apple' };
+    return {
+      platform,
+      access: s.authorized,
+      overlay: true,
+      battery: true,
+      running: s.monitoring,
+      apps: s.apps,
+      brand: 'apple',
+      notifications: true,
+    };
   }
-  return { platform, access: false, overlay: false, battery: false, running: false, apps: 0, brand: '' };
+  return { platform, access: false, overlay: false, battery: false, running: false, apps: 0, brand: '', notifications: false };
 }
 
 /** Opens the system screen where the student grants access. */
@@ -70,6 +82,11 @@ export async function requestAccess(): Promise<boolean> {
 
 export function openOverlaySettings() {
   UsageMonitor?.openOverlaySettings();
+}
+
+export function openNotificationSettings() {
+  if (UsageMonitor?.openNotificationSettings) UsageMonitor.openNotificationSettings();
+  else UsageMonitor?.openAppSettings();
 }
 
 export function openBatterySettings() {

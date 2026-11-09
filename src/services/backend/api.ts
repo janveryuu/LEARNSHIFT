@@ -233,7 +233,7 @@ export async function exportMyData() {
   if (!p) return {};
   const id = p.id;
   const q = <T>(r: PromiseLike<{ data: T | null }>) => Promise.resolve(r).then((x) => x.data);
-  const [progress, mastery, attempts, usage, nudges, requests, tutor, links, classes] = await Promise.all([
+  const [progress, mastery, attempts, usage, nudges, requests, tutor, links, classes, apps] = await Promise.all([
     q(supabase.from('progress').select('*').eq('student_id', id).maybeSingle()),
     q(supabase.from('mastery').select('skill_id, p, updated_at').eq('student_id', id)),
     q(supabase.from('attempts').select('question_id, chosen, correct, seconds, context, created_at').eq('student_id', id)),
@@ -243,6 +243,7 @@ export async function exportMyData() {
     q(supabase.from('tutor_answers').select('question_id, lang, content, confidence, status, created_at').eq('student_id', id)),
     q(supabase.from('guardian_links').select('guardian_id, consent_at').eq('student_id', id)),
     q(supabase.from('class_members').select('class_id, joined_at').eq('student_id', id)),
+    q(supabase.from('app_usage').select('day, label, category, minutes').eq('student_id', id)),
   ]);
   return {
     profile: { name: p.display_name, email: p.email, grade: p.grade, language: p.lang },
@@ -250,11 +251,12 @@ export async function exportMyData() {
     mastery,
     attempts,
     usage_daily: usage,
+    minutes_per_app: apps,
     nudges,
     time_requests: requests,
     tutor_answers: tutor,
     guardians: links,
     classes,
-    note: 'Which apps you used stays on your phone. Only daily totals are stored here. No messages, screens or browsing are ever collected.',
+    note: 'Stored: daily totals and minutes per app (shared with your linked guardians). Never collected: messages, screens, browsing or what you type.',
   };
 }

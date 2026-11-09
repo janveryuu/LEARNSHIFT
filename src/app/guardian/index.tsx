@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Clock, EyeSlash, Moon, Sparkle } from 'phosphor-react-native';
 
+import { AppsCard, NowCard } from '@/components/guardian/AppUsage';
 import { Tarsi } from '@/components/mascot/Tarsi';
 import {
   BarChart,
@@ -33,12 +34,34 @@ import { formatClock, useT } from '@/i18n/useT';
 import { IS_PITCH, PITCH_NAMES } from '@/lib/config';
 import type { DaySummary } from '@/services/types';
 import * as api from '@/services/backend/api';
-import { loadChild, patchChild, useGuardian, useGuardianLive } from '@/services/backend/guardian';
+import {
+  loadChild,
+  patchChild,
+  useGuardian,
+  useGuardianLive,
+  type AppDay,
+  type LiveNow,
+} from '@/services/backend/guardian';
 import { todayKey, useAppStore, type TimeRequest } from '@/store/useAppStore';
 import { useAuth } from '@/store/useAuth';
 
 const BEDTIMES = [21 * 60, 21 * 60 + 30, 22 * 60, 22 * 60 + 30, 23 * 60];
 const LIMITS = [0, 10, 15, 20, 30, 45, 60];
+
+/** Sample per-app day for the pitch build. */
+const PITCH_APPS: AppDay[] = [
+  ['com.zhiliaoapp.musically', 'TikTok', 'video', 62],
+  ['com.google.android.youtube', 'YouTube', 'video', 41],
+  ['com.facebook.katana', 'Facebook', 'social', 18],
+  ['com.mobile.legends', 'Mobile Legends', 'games', 9],
+  ['com.google.android.apps.classroom', 'Classroom', 'study', 4],
+].map(([p, label, category, minutes]) => ({
+  day: todayKey(),
+  package: p as string,
+  label: label as string,
+  category: category as AppDay['category'],
+  minutes: minutes as number,
+}));
 
 /** Everything the guardian screen shows, from the demo store or the server. */
 type GView = {
@@ -59,6 +82,8 @@ type GView = {
   unlockUntil: string | null;
   scrollLimit: number | null;
   gamesLimit: number | null;
+  apps: AppDay[];
+  live: LiveNow | null;
   hasData: boolean;
   approve: (id: string) => void;
   decline: (id: string) => void;
@@ -96,6 +121,8 @@ function usePitchView(): GView {
     unlockUntil: null,
     scrollLimit: limits.scroll,
     gamesLimit: limits.games,
+    apps: PITCH_APPS,
+    live: null,
     hasData: true,
     approve: (id) => s().resolveRequest(id, 'approved'),
     decline: (id) => s().resolveRequest(id, 'declined'),
@@ -142,6 +169,8 @@ function useRealView(onError: (m: string) => void): GView | null {
     unlockUntil: d.controls.unlockUntil,
     scrollLimit: d.controls.scrollLimit,
     gamesLimit: d.controls.gamesLimit,
+    apps: d.apps,
+    live: d.live,
     hasData: d.usage.some((u) => u.total > 0) || d.nudges.length > 0,
     approve: (id) => {
       patchChild(selected, (x) => ({ ...x, requests: x.requests.map((r) => (r.id === id ? { ...r, status: 'approved' } : r)) }));
@@ -276,6 +305,9 @@ function Content({ v, wide }: { v: GView; wide: boolean }) {
 
   const summary = (
     <View style={styles.col}>
+      {!IS_PITCH ? (
+        <NowCard live={v.live} childName={v.childName} scrollLimit={v.scrollLimit} gamesLimit={v.gamesLimit} />
+      ) : null}
       <Card style={styles.gap}>
         <View style={styles.rowTop}>
           <View style={styles.flexGap}>
@@ -308,6 +340,7 @@ function Content({ v, wide }: { v: GView; wide: boolean }) {
           <EmptyState title={g.noData} subtitle={g.noDataSub(v.childName)} expression="curious" />
         )}
       </Card>
+      <AppsCard apps={v.apps} childName={v.childName} />
       <View style={styles.row}>
         <StatTile
           label={g.lateNight}

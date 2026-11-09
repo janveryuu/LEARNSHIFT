@@ -50,7 +50,11 @@ object Risk {
 
 object Notifier {
   const val CH_MONITOR = "ls_monitor"
-  const val CH_NUDGES = "nudges"
+  // A new id: an older "nudges" channel may exist at a quiet importance, and
+  // Android never raises a channel's importance once it is created.
+  const val CH_NUDGES = "ls_breaks"
+  const val CH_COUNTDOWN = "ls_countdown"
+  private const val COUNTDOWN_ID = 4212
   const val MONITOR_ID = 4210
   private const val NUDGE_ID = 4211
   const val ACTION_SNOOZE = "expo.modules.usagemonitor.SNOOZE"
@@ -65,8 +69,15 @@ object Notifier {
       },
     )
     nm.createNotificationChannel(
-      NotificationChannel(CH_NUDGES, "Study nudges", NotificationManager.IMPORTANCE_HIGH).apply {
-        description = "Learning breaks and wind-down reminders"
+      NotificationChannel(CH_NUDGES, "Break reminders", NotificationManager.IMPORTANCE_HIGH).apply {
+        description = "Learning breaks, limits and wind-down reminders"
+        enableVibration(true)
+      },
+    )
+    nm.createNotificationChannel(
+      NotificationChannel(CH_COUNTDOWN, "Time left", NotificationManager.IMPORTANCE_LOW).apply {
+        description = "Live countdown to the next break while a limit is running"
+        setShowBadge(false)
       },
     )
   }
@@ -89,9 +100,56 @@ object Notifier {
     .setContentIntent(open(ctx, "learnshift://privacy", 1))
     .build()
 
-  private fun allowed(ctx: Context) =
-    Build.VERSION.SDK_INT < 33 ||
-      ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+  fun allowed(ctx: Context) =
+    NotificationManagerCompat.from(ctx).areNotificationsEnabled() &&
+      (Build.VERSION.SDK_INT < 33 ||
+        ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+
+  /** Whether break reminders can pop up: app notifications on and the channel not muted. */
+  fun breaksEnabled(ctx: Context): Boolean {
+    if (!allowed(ctx)) return false
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return true
+    channels(ctx)
+    val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val importance = nm.getNotificationChannel(CH_NUDGES)?.importance ?: NotificationManager.IMPORTANCE_NONE
+    return importance != NotificationManager.IMPORTANCE_NONE
+  }
+
+  private fun clockOf(t: Long): String {
+    val c = java.util.Calendar.getInstance().apply { timeInMillis = t }
+    return clock(c.get(java.util.Calendar.HOUR_OF_DAY) * 60 + c.get(java.util.Calendar.MINUTE))
+  }
+
+  /** Ongoing "TikTok · break in 7:32" notification with a live countdown. */
+  fun countdown(ctx: Context, cfg: Config, label: String, limit: Int, deadline: Long, now: Long) {
+    if (!allowed(ctx)) return
+    val total = limit * 60
+    val left = ((deadline - now) / 1000L).toInt().coerceIn(0, total)
+    val who = cfg.guardianName.ifEmpty { if (cfg.fil) "guardian mo" else "Your guardian" }
+    val text = if (cfg.fil) "$limit-min na limit mula kay $who. Break nang ${clockOf(deadline)}."
+    else "$who set $limit min. Break at ${clockOf(deadline)}."
+    val b = NotificationCompat.Builder(ctx, CH_COUNTDOWN)
+      .setSmallIcon(R.drawable.ls_notify)
+      .setContentTitle(if (cfg.fil) "$label · break sa" else "$label · break in")
+      .setContentText(text)
+      .setUsesChronometer(true)
+      .setChronometerCountDown(true)
+      .setWhen(deadline)
+      .setShowWhen(true)
+      .setProgress(total, total - left, false)
+      .setOngoing(true)
+      .setOnlyAlertOnce(true)
+      .setSilent(true)
+      .setPriority(NotificationCompat.PRIORITY_LOW)
+      .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+      .setContentIntent(open(ctx, "learnshift://home", 5))
+    try {
+      NotificationManagerCompat.from(ctx).notify(COUNTDOWN_ID, b.build())
+    } catch (_: SecurityException) {
+    }
+  }
+
+  fun cancelCountdown(ctx: Context) = NotificationManagerCompat.from(ctx).cancel(COUNTDOWN_ID)
 
   private fun catWord(cat: Cat, fil: Boolean) = when (cat) {
     Cat.VIDEO -> "videos"
