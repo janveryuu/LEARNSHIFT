@@ -1,56 +1,84 @@
-# Welcome to your Expo app 👋
+# LearnShift
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Same phone, better minutes.**
+LearnShift notices when screen time is turning unhealthy and turns that moment into a short lesson on the exact skill the student is missing.
 
-## Get started
+Built for the AIdeathon: Tech Connect SYNC. Frontend prototype for students, guardians and teachers.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+**Student**
+- Home with streak, screen-time gauge and live risk chip
+- Smart nudges in four calm levels: check-in, learning break, wind-down, guardian lock
+- 45-second learning breaks with idea cards and adaptive quizzes
+- Bilingual AI tutor (English / Filipino) that explains the student's exact mistake
+- Skill Map showing the root learning gap
+- Insights: weekly report, learning heatmap, shareable card
+- *Your little isla*: a calm island that grows with learning (with Tarsi, the tarsier guide)
+- Focus timer, offline lesson packs, privacy center, nudge history
 
-   ```bash
-   npx expo start
-   ```
+**Guardian**: weekly habit summary, bedtime and lock controls, request inbox (habits only, never grades)
 
-In the output, you'll find options to open the app in a
+**Teacher**: class skill heatmap, needs-support list, review queue for low-confidence tutor answers (learning only, never screen time)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## AI components (mocked on-device)
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+| Component | What it does |
+|---|---|
+| Risk model | Logistic score from session length, time of day, school day, app type, with readable reasons |
+| Gap engine | Bayesian Knowledge Tracing over a prerequisite graph to find the root skill gap |
+| Intervention policy | Safety guardrails first, then Thompson sampling to pick the gentlest nudge that works |
+| Tutor | Misconception bank and step-by-step explanations; flags low-confidence answers for teacher review |
 
-## Get a fresh project
+All four live behind typed interfaces in `src/services/types.ts`, ready for a real backend.
 
-When you're ready, run:
+## Tech stack
+
+Expo SDK 58 · React Native · Expo Router · TypeScript · Reanimated 4 · Zustand · FlashList · React Native SVG
+
+## Getting started
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+- **Phone:** scan the QR code with Expo Go
+- **Web:** press `w` (best for the Teacher and Guardian dashboards)
 
-### Other setup steps
+## Demo
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Tap **Demo** on Home (or long-press the LearnShift logo) to open the demo panel:
 
-## Learn more
+1. **Afternoon scroll**: a 45-minute video session triggers a check-in, then a learning break
+2. **11:30 PM school night**: night theme and wind-down mode
+3. **Guardian lock**: ask a guardian for 15 more minutes and approve it from the Guardian view
+4. **Wrong answer**: the tutor explains the exact mistake, in English or Filipino
 
-To learn more about developing your project with Expo, look at the following resources:
+Switch **Role** in the demo panel to see the Guardian and Teacher views.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project structure
 
-## Join the community
+```
+src/
+  app/          screens (Expo Router)
+  components/   UI, learning, isla, student and teacher components
+  services/     mock AI and usage data
+  store/        app state
+  data/         skills, questions, lessons, seed data
+  i18n/         English and Filipino strings
+```
 
-Join our community of developers creating universal apps.
+## Privacy
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+No real accounts or data. Screen-time data is simulated. Guardians see habits only; teachers see learning only.
+
+## AI tools used
+
+- **Claude Code (Anthropic)**: planning, UI, screens, mock AI services and bilingual content, built from the team's brief and concept
+
+## License
+
+See [LICENSE](LICENSE).

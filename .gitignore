@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# third-party design references (not ours to publish)
+design/reference/

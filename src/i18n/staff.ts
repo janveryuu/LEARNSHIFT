@@ -1,0 +1,103 @@
+import { useLang } from './useT';
+
+/** Teacher dashboard copy. English only: DepEd teachers work in English. */
+export const teacherStrings = {
+  title: 'Grade 8 – Sampaguita',
+  teacher: 'Ms. Reyes',
+  classTitle: 'Class mastery',
+  classSub: (n: number) => `${n} students · Grade 7 Math`,
+  needs: 'Needs support',
+  review: 'Review queue',
+  reviewSub: 'Tutor answers flagged as unsure',
+  rootGap: (s: string) => `Root gap: ${s}`,
+  dropping: 'Dropping 2 weeks',
+  low: (s: string) => `Low: ${s}`,
+  approve: 'Approve',
+  edit: 'Edit',
+  save: 'Save',
+  approved: 'Approved',
+  edited: 'Edited',
+  confidence: (n: number) => `${n}% sure`,
+  wrong: 'Answered',
+  draft: 'Tutor draft',
+  open: 'Open student',
+  learningOnly: 'Learning data only. Never screen time.',
+  mastery: 'Skill mastery',
+  forecast: (s: string, d: string) => `${s} mastered by ~${d}`,
+  avg: 'Average mastery',
+  trend: 'Last 5 weeks',
+  classRoot: (s: string, n: number) => `${s} is the root gap for ${n} students`,
+  allSections: 'All',
+  empty: 'Queue is clear',
+  emptySub: 'Tarsi will flag anything it isn’t sure about.',
+  low2: 'Needs work',
+  high: 'Mastered',
+};
+
+const guardianEn = {
+  title: 'This week',
+  hello: (n: string) => `Mika’s week`,
+  summary: (drop: number, late: number, frac: number) =>
+    `Screen time down ${drop} min a day. ${late === 1 ? 'One late night' : `${late} late nights`}. Practiced fractions ${frac} times.`,
+  report: 'Tarsi report',
+  lateNight: 'Late-night',
+  learning: 'Learning',
+  minutes: 'min',
+  perDay: 'Screen time per day',
+  controls: 'Controls',
+  bedtime: 'Bedtime',
+  alerts: 'Late-night alerts',
+  lock: 'Guardian lock',
+  lockSub: 'Locks the phone after bedtime. Emergency calls always work.',
+  limit: 'Daily limit',
+  adaptive: 'Adaptive',
+  fixed: 'Fixed',
+  requests: 'Requests',
+  requestTitle: (m: number) => `${m} more minutes`,
+  requestSub: (t: string) => `Mika · ${t}`,
+  none: 'No requests',
+  noneSub: 'Mika hasn’t asked for extra time.',
+  approve: 'Approve',
+  decline: 'Decline',
+  approved: 'Approved',
+  declined: 'Declined',
+  note: 'You see habits, never messages or content.',
+  seeds: 'Earlier this week',
+};
+
+const guardianFil: typeof guardianEn = {
+  title: 'Ngayong linggo',
+  hello: () => `Linggo ni Mika`,
+  summary: (drop, late, frac) =>
+    `Bumaba ng ${drop} min kada araw ang screen time. ${late === 1 ? 'Isang gabing puyat' : `${late} gabing puyat`}. ${frac} beses nag-practice ng fractions.`,
+  report: 'Ulat ni Tarsi',
+  lateNight: 'Puyat',
+  learning: 'Pag-aaral',
+  minutes: 'min',
+  perDay: 'Screen time kada araw',
+  controls: 'Kontrol',
+  bedtime: 'Oras ng tulog',
+  alerts: 'Abiso sa puyat',
+  lock: 'Lock ni Guardian',
+  lockSub: 'Nila-lock ang phone pagkatapos ng oras ng tulog. Laging gumagana ang emergency call.',
+  limit: 'Limit kada araw',
+  adaptive: 'Adaptive',
+  fixed: 'Pirmi',
+  requests: 'Mga hiling',
+  requestTitle: (m) => `${m} minuto pa`,
+  requestSub: (t) => `Mika · ${t}`,
+  none: 'Walang hiling',
+  noneSub: 'Hindi pa humihingi ng dagdag na oras si Mika.',
+  approve: 'Payagan',
+  decline: 'Tanggihan',
+  approved: 'Pinayagan',
+  declined: 'Tinanggihan',
+  note: 'Gawi lang ang nakikita mo, hindi mensahe o nilalaman.',
+  seeds: 'Mas maaga ngayong linggo',
+};
+
+export type GuardianStrings = typeof guardianEn;
+
+export function useGuardianT(): GuardianStrings {
+  return useLang() === 'fil' ? guardianFil : guardianEn;
+}
