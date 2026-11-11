@@ -52,7 +52,9 @@ const LIMITS = [0, 10, 15, 20, 30, 45, 60];
 const PITCH_APPS: AppDay[] = [
   ['com.zhiliaoapp.musically', 'TikTok', 'video', 62],
   ['com.google.android.youtube', 'YouTube', 'video', 41],
+  ['com.instagram.android', 'Instagram', 'social', 24],
   ['com.facebook.katana', 'Facebook', 'social', 18],
+  ['com.facebook.orca', 'Messenger', 'social', 12],
   ['com.mobile.legends', 'Mobile Legends', 'games', 9],
   ['com.google.android.apps.classroom', 'Classroom', 'study', 4],
 ].map(([p, label, category, minutes]) => ({

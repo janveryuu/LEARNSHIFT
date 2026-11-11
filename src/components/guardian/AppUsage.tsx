@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { DeviceMobile, GameController, GraduationCap, Play, Sparkle, UsersThree } from 'phosphor-react-native';
 
 import { Card, Chip, EmptyState, SegmentedControl, Text } from '@/components/ui';
@@ -10,6 +10,8 @@ import { useGuardianT } from '@/i18n/staff';
 import { formatClock, formatDuration } from '@/i18n/useT';
 import type { AppCategory, AppDay, LiveNow } from '@/services/backend/guardian';
 import { todayKey } from '@/store/useAppStore';
+
+import { appIcon } from './appIcons';
 
 const DAY_MS = 24 * 3600 * 1000;
 
@@ -80,9 +82,13 @@ export function NowCard({
       </View>
       {fresh ? (
         <View style={styles.nowRow}>
-          <View style={[styles.appIcon, { backgroundColor: color(live!.category) }]}>
-            <CatIcon cat={live!.category} size={24} color="#FFFFFF" />
-          </View>
+          {appIcon(live!.package, live!.label) ? (
+            <Image source={appIcon(live!.package, live!.label)!} style={styles.appIcon} accessibilityIgnoresInvertColors />
+          ) : (
+            <View style={[styles.appIcon, { backgroundColor: color(live!.category) }]}>
+              <CatIcon cat={live!.category} size={24} color="#FFFFFF" />
+            </View>
+          )}
           <View style={styles.flex}>
             <Text variant="title" numberOfLines={1}>
               {live!.label}
@@ -188,9 +194,13 @@ export function AppsCard({ apps, childName }: { apps: AppDay[]; childName: strin
               accessible
               accessibilityLabel={`${r.label}, ${formatDuration(r.minutes)}`}
             >
-              <View style={[styles.smallIcon, { backgroundColor: color(r.category) }]}>
-                <CatIcon cat={r.category} size={14} color="#FFFFFF" />
-              </View>
+              {appIcon(r.key, r.label) ? (
+                <Image source={appIcon(r.key, r.label)!} style={styles.smallIcon} accessibilityIgnoresInvertColors />
+              ) : (
+                <View style={[styles.smallIcon, { backgroundColor: color(r.category) }]}>
+                  <CatIcon cat={r.category} size={14} color="#FFFFFF" />
+                </View>
+              )}
               <View style={styles.flex}>
                 <View style={styles.rowBetween}>
                   <Text variant="subhead" color="text" numberOfLines={1} style={styles.flex}>
