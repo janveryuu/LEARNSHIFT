@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BookmarkSimple, ChatTeardropText, Translate, X } from 'phosphor-react-native';
 
 import { Diagram } from '@/components/learn/Diagram';
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { Chip, IconButton, PillButton, PressableScale, ProgressBar, Text } from '@/components/ui';
 import { FEED, type FeedCard } from '@/data/lessons';
 import { questionsFor } from '@/data/questions';
@@ -224,7 +224,7 @@ function EndPage({ height }: { height: number }) {
   const t = stringsFor(useLang());
   return (
     <View style={[styles.page, styles.end, { height }]}>
-      <Tarsi expression="waving" size={170} />
+      <Paty expression="waving" size={170} />
       <Text variant="largeTitle" color="#F4EFE8" align="center">
         {t.feed.endTitle}
       </Text>

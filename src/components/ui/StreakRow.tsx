@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Moon } from 'phosphor-react-native';
 
-import { TarsiSpark, type SparkState } from '@/components/mascot/TarsiSpark';
+import { PatySpark, type SparkState } from '@/components/mascot/PatySpark';
 import { haptic } from '@/design/haptics';
 import { nativeOnly } from '@/design/motion';
 import { useTheme } from '@/design/theme';
@@ -21,7 +21,7 @@ export type StreakDay = {
 
 type Props = { days: readonly StreakDay[] };
 
-/** Su–Sa row of Tarsi spark faces on a soft tray, green dot under today. */
+/** Su–Sa row of Paty spark faces on a soft tray, green dot under today. */
 export function StreakRow({ days }: Props) {
   const { c } = useTheme();
   const t = useT();
@@ -56,7 +56,7 @@ export function StreakRow({ days }: Props) {
               hitSlop={4}
             >
               <View style={styles.face}>
-                <TarsiSpark state={d.state} size={40} />
+                <PatySpark state={d.state} size={40} />
                 {d.lateNight ? (
                   <View style={[styles.moon, { backgroundColor: c.card }]}>
                     <Moon size={11} weight="fill" color={c.indigo} />

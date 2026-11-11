@@ -44,3 +44,6 @@ example
 
 # third-party design references (not ours to publish)
 design/reference/
+
+# pitch web export
+dist-pitch/

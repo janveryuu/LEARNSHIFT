@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BellSlash, CaretLeft } from 'phosphor-react-native';
 
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { Chip, NavBar, PillButton, Ring, Stepper, Text } from '@/components/ui';
 import { haptic } from '@/design/haptics';
 import { useTheme } from '@/design/theme';
@@ -78,7 +78,7 @@ export default function Focus() {
             stroke={14}
             color={state === 'done' ? c.success : c.tabProfile}
           >
-            <Tarsi
+            <Paty
               expression={state === 'done' ? 'cheering' : 'studying'}
               prop={state === 'done' ? 'none' : 'book'}
               size={120}

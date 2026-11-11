@@ -33,7 +33,7 @@ export type Palette = {
   heat: readonly [string, string, string, string, string];
   shadow: string;
   scrim: string;
-  /** Mascot fur colors shift slightly at night so Tarsi never glows. */
+  /** Mascot fur colors shift slightly at night so Paty never glows. */
   fur: string;
   furDeep: string;
   furLight: string;

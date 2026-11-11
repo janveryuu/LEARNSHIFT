@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Clock, EyeSlash, Moon, Sparkle } from 'phosphor-react-native';
 
 import { AppsCard, NowCard } from '@/components/guardian/AppUsage';
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import {
   BarChart,
   Card,
@@ -314,7 +314,7 @@ function Content({ v, wide }: { v: GView; wide: boolean }) {
             <Text variant="overline">{g.title}</Text>
             <Text variant="title">{g.summary(v.dropMinutes, lateNights, v.breaks)}</Text>
           </View>
-          <Tarsi expression="proud" size={84} />
+          <Paty expression="proud" size={84} />
         </View>
         <View style={[styles.report, { backgroundColor: c.inset }]}>
           <Ring progress={score} size={64} stroke={7}>
@@ -531,7 +531,7 @@ function LinkChild({ first }: { first?: boolean }) {
 
   return (
     <Card style={styles.gap}>
-      {first ? <Tarsi expression="waving" size={110} /> : <Text variant="title">{g.linkTitle}</Text>}
+      {first ? <Paty expression="waving" size={110} /> : <Text variant="title">{g.linkTitle}</Text>}
       <Text variant="subhead">{g.linkSub}</Text>
       {error ? <Notice text={error} /> : null}
       <TextField

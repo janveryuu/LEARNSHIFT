@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { FileText, Info, Lifebuoy, ListChecks, ShieldCheck, UserCircle } from 'phosphor-react-native';
 
-import { TarsiAvatar } from '@/components/mascot/Tarsi';
+import { PatyAvatar } from '@/components/mascot/Paty';
 import { Screen } from '@/components/student/Screen';
 import { BooksArt, LanguageArt, MoonArt, ShieldArt } from '@/components/student/TileArt';
 import { Card, DarkTile, LargeTitleHeader, ListGroup, ListRow, SegmentedControl, Stagger, Text } from '@/components/ui';
@@ -36,7 +36,7 @@ export default function Profile() {
     <Screen tabs header={<LargeTitleHeader title={t.profile.title} />}>
       <Stagger index={i++}>
         <Card style={styles.me}>
-          <TarsiAvatar size={58} />
+          <PatyAvatar size={58} />
           <View style={styles.flex}>
             <Text variant="title" numberOfLines={1}>
               {name}

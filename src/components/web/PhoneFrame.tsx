@@ -55,7 +55,7 @@ export function PhoneFrame() {
           <div style={styles.brand}>LearnShift</div>
           <div style={styles.tag}>Same phone, better minutes.</div>
           <p style={styles.copy}>
-            Tarsi notices long scrolls and turns them into 45-second lessons. One app for students, guardians and
+            Paty notices long scrolls and turns them into 45-second lessons. One app for students, guardians and
             teachers.
           </p>
           <button type="button" onClick={fullWidth} style={styles.button}>

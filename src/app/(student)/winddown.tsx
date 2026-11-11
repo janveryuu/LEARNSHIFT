@@ -13,7 +13,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BookOpen, CircleHalf, Pause, Play, ShieldCheck, Wind, X } from 'phosphor-react-native';
 
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import {
   AnimatedNumber,
   BottomSheet,
@@ -95,7 +95,7 @@ function WindDown() {
       </View>
       <ScrollView contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.hero}>
-          <Tarsi expression="sleepy" size={150} />
+          <Paty expression="sleepy" size={150} />
           <Text variant="overline">{t.winddown.sub}</Text>
           <View style={styles.time} accessible accessibilityLabel={t.winddown.its(formatClock(live.clock))}>
             <Text variant="display">{h}</Text>
@@ -291,7 +291,7 @@ function StoryPanel() {
   return (
     <View style={styles.panel}>
       <View style={[styles.cover, { backgroundColor: c.tileDark }]}>
-        <Tarsi expression="sleepy" size={96} alive={false} />
+        <Paty expression="sleepy" size={96} alive={false} />
       </View>
       <Text variant="title" align="center">
         {t.winddown.storyTitle}

@@ -8,7 +8,7 @@ import { Lightbulb, X } from 'phosphor-react-native';
 import { CoinFly, SparkBurst } from '@/components/learn/Effects';
 import { MasteryRow } from '@/components/learn/MasteryRow';
 import { QuizOption, type OptionState } from '@/components/learn/QuizOption';
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { Card, Chip, CoinCounter, IconButton, InsetCard, PillButton, Text } from '@/components/ui';
 import { QUESTION_BY_ID, questionsFor, type Question } from '@/data/questions';
 import { SHORT, SKILL_BY_ID, type SkillId } from '@/data/skills';
@@ -314,7 +314,7 @@ function Results({
       </View>
       <ScrollView contentContainerStyle={styles.body}>
         <View style={styles.center}>
-          <Tarsi expression={score >= 3 ? 'proud' : 'happy'} size={130} />
+          <Paty expression={score >= 3 ? 'proud' : 'happy'} size={130} />
           <Text variant="overline">{t.quiz.results}</Text>
           <Text variant="display" tabular>
             {t.quiz.score(score, COUNT)}

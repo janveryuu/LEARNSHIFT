@@ -11,7 +11,7 @@ import Animated, {
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { Flame } from 'phosphor-react-native';
 
-import { Tarsi, type Expression } from '@/components/mascot/Tarsi';
+import { Paty, type Expression } from '@/components/mascot/Paty';
 import { ease, enterAt, spring, timing, useReducedMotion } from '@/design/motion';
 import { useTheme } from '@/design/theme';
 import { radius } from '@/design/tokens';
@@ -110,7 +110,7 @@ export function EmptyState({
   const t = useT();
   return (
     <View style={styles.empty}>
-      <Tarsi expression={expression} size={96} />
+      <Paty expression={expression} size={96} />
       <Text variant="headline" align="center">
         {title ?? t.empty.title}
       </Text>

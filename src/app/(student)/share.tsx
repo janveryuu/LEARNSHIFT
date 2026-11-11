@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ShareNetwork } from 'phosphor-react-native';
 
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { BarChart, PillButton, Ring, SheetHeader, Text } from '@/components/ui';
 import { gapEngine } from '@/services/ai/gapEngine';
 import { IS_PITCH } from '@/lib/config';
@@ -13,7 +13,7 @@ import { useWeek, weeklyGrade, masteryGain } from '@/hooks/useWeek';
 import { formatDuration, useT } from '@/i18n/useT';
 import { useAppStore } from '@/store/useAppStore';
 
-/** Share card of the weekly report: big numbers, Tarsi, no private details. */
+/** Share card of the weekly report: big numbers, Paty, no private details. */
 export default function ShareCard() {
   const { c } = useTheme();
   const t = useT();
@@ -53,7 +53,7 @@ export default function ShareCard() {
                 {grade}
               </Text>
             </Ring>
-            <Tarsi expression="proud" size={120} alive={false} interactive={false} />
+            <Paty expression="proud" size={120} alive={false} interactive={false} />
           </View>
           <View style={styles.nums}>
             <View style={styles.num}>

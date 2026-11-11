@@ -165,8 +165,8 @@ export function configure(p: Payload) {
                     ? `${m} min ka na ngayong araw`
                     : `${m} min on your apps today`,
               body: fil
-                ? `Break? 45 segundo ng ${p.rootSkillName} kasama si Tarsi.`
-                : `Break? 45 seconds of ${p.rootSkillName} with Tarsi.`,
+                ? `Break? 45 segundo ng ${p.rootSkillName} kasama si Paty.`
+                : `Break? 45 seconds of ${p.rootSkillName} with Paty.`,
               userInfo: { url: `/break/${p.rootSkill}` },
             },
           },
@@ -196,7 +196,7 @@ export function configure(p: Payload) {
           type: 'sendNotification',
           payload: {
             title: fil ? 'Oras na para magpahinga' : 'Time to wind down',
-            body: fil ? 'Lampas na sa oras ng tulog mo. May kalmadong wind-down si Tarsi.' : 'It’s past your bedtime. Tarsi has a calm wind-down ready.',
+            body: fil ? 'Lampas na sa oras ng tulog mo. May kalmadong wind-down si Paty.' : 'It’s past your bedtime. Paty has a calm wind-down ready.',
             userInfo: { url: '/winddown' },
           },
         },

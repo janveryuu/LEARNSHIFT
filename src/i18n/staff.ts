@@ -29,7 +29,7 @@ export const teacherStrings = {
   classRoot: (s: string, n: number) => `${s} is the root gap for ${n} ${n === 1 ? 'student' : 'students'}`,
   allSections: 'All',
   empty: 'Queue is clear',
-  emptySub: 'Tarsi will flag anything it isn’t sure about.',
+  emptySub: 'Paty will flag anything it isn’t sure about.',
   low2: 'Needs work',
   high: 'Mastered',
   createTitle: 'Create your first class',
@@ -72,7 +72,7 @@ const guardianEn = {
     ]
       .filter(Boolean)
       .join(' '),
-  report: 'Tarsi report',
+  report: 'Paty report',
   lateNight: 'Late-night',
   learning: 'Learning',
   minutes: 'min',
@@ -110,7 +110,7 @@ const guardianEn = {
   noAppsSub: (n: string) => `Shows up after ${n}’s phone sends its next report (every 15 minutes).`,
   cats: { video: 'Video', social: 'Social', games: 'Games', study: 'Study', other: 'Other' } as Record<string, string>,
   limitsTitle: 'Break after',
-  limitsSub: 'Minutes of non-stop use before Tarsi sends a break reminder. Off lets Tarsi decide.',
+  limitsSub: 'Minutes of non-stop use before Paty sends a break reminder. Off lets Paty decide.',
   scrollLimit: 'Videos & social (TikTok, YouTube, Instagram…)',
   gamesLimit: 'Games',
   off: 'Off',
@@ -152,7 +152,7 @@ const guardianFil: typeof guardianEn = {
     ]
       .filter(Boolean)
       .join(' '),
-  report: 'Ulat ni Tarsi',
+  report: 'Ulat ni Paty',
   lateNight: 'Puyat',
   learning: 'Pag-aaral',
   minutes: 'min',
@@ -190,7 +190,7 @@ const guardianFil: typeof guardianEn = {
   noAppsSub: (n) => `Lalabas ito pagkatapos ng susunod na report ng phone ni ${n} (bawat 15 minuto).`,
   cats: { video: 'Video', social: 'Social', games: 'Games', study: 'Pag-aaral', other: 'Iba pa' },
   limitsTitle: 'Break pagkatapos ng',
-  limitsSub: 'Ilang minutong tuloy-tuloy bago magpaalala si Tarsi na mag-break. Kapag Off, si Tarsi ang magpapasya.',
+  limitsSub: 'Ilang minutong tuloy-tuloy bago magpaalala si Paty na mag-break. Kapag Off, si Paty ang magpapasya.',
   scrollLimit: 'Videos at social (TikTok, YouTube, Instagram…)',
   gamesLimit: 'Games',
   off: 'Off',

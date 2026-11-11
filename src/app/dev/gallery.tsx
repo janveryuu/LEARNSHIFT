@@ -9,8 +9,8 @@ import { Diagram } from '@/components/learn/Diagram';
 import { QuizOption } from '@/components/learn/QuizOption';
 import { SkillGraph } from '@/components/learn/SkillGraph';
 import { BooksArt, FeedArt, LanguageArt, MoonArt, ShieldArt, TutorArt } from '@/components/student/TileArt';
-import { Tarsi, type Expression } from '@/components/mascot/Tarsi';
-import { TarsiSpark } from '@/components/mascot/TarsiSpark';
+import { Paty, type Expression } from '@/components/mascot/Paty';
+import { PatySpark } from '@/components/mascot/PatySpark';
 import {
   BottomSheet,
   BarChart,
@@ -272,7 +272,7 @@ function Column() {
             <Text variant="subhead">Fractions, your root gap</Text>
             <PillButton label="Start break" size="md" onPress={() => {}} style={styles.mt8} />
           </View>
-          <Tarsi expression="happy" prop="pencil" size={110} />
+          <Paty expression="happy" prop="pencil" size={110} />
         </Card>
       </Section>
 
@@ -434,7 +434,7 @@ function Column() {
             <Text variant="statNumber">B+</Text>
           </Ring>
           <View style={styles.flexGap}>
-            <Chip label="Tarsi report" kind="accent" style={styles.smallChip} />
+            <Chip label="Paty report" kind="accent" style={styles.smallChip} />
             <Text variant="headline">Steady week.</Text>
             <Text variant="subhead">3 calm nights · Fractions up</Text>
           </View>
@@ -468,20 +468,20 @@ function Column() {
             <StreakRow days={streak} />
           </View>
           <View style={styles.wrap}>
-            <TarsiSpark state="done" />
-            <TarsiSpark state="today" />
-            <TarsiSpark state="rest" />
-            <TarsiSpark state="future" />
+            <PatySpark state="done" />
+            <PatySpark state="today" />
+            <PatySpark state="rest" />
+            <PatySpark state="future" />
           </View>
         </Card>
       </Section>
 
-      <Section title="Tarsi" index={next()}>
+      <Section title="Paty" index={next()}>
         <Card>
-          <View style={styles.tarsiGrid}>
+          <View style={styles.patyGrid}>
             {expressions.map((e) => (
-              <View key={e} style={styles.tarsiCell}>
-                <Tarsi expression={e} size={92} />
+              <View key={e} style={styles.patyCell}>
+                <Paty expression={e} size={92} />
                 <Text variant="caption">{e}</Text>
               </View>
             ))}
@@ -519,7 +519,7 @@ function Column() {
           </View>
         </Card>
         <Card>
-          <EmptyState title="No nudges yet" subtitle="Tarsi is keeping quiet. Nice." expression="happy" />
+          <EmptyState title="No nudges yet" subtitle="Paty is keeping quiet. Nice." expression="happy" />
         </Card>
       </Section>
 
@@ -625,8 +625,8 @@ const styles = StyleSheet.create({
   report: { flexDirection: 'row', alignItems: 'center', gap: 18 },
   smallChip: { height: 24, paddingHorizontal: 10, marginBottom: 4 },
   pt: { paddingTop: 36 },
-  tarsiGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
-  tarsiCell: { width: '25%', minWidth: 92, alignItems: 'center', gap: 2 },
+  patyGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
+  patyCell: { width: '25%', minWidth: 92, alignItems: 'center', gap: 2 },
   sheetBody: { padding: space.screen, paddingTop: 4 },
   tabCard: { paddingTop: 22 },
 });

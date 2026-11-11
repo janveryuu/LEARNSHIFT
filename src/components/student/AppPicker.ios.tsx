@@ -20,7 +20,7 @@ const Sheet: ComponentType<SheetProps> | null = (() => {
   }
 })();
 
-/** Apple's own sheet for choosing which apps Tarsi watches (Screen Time). */
+/** Apple's own sheet for choosing which apps Paty watches (Screen Time). */
 export function AppPicker({ visible, onClose, onPicked }: { visible: boolean; onClose: () => void; onPicked: () => void }) {
   if (!visible || !Sheet) return null;
   return (

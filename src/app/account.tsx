@@ -4,7 +4,7 @@ import { Redirect, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChalkboardTeacher, HouseLine, SignOut, Trash } from 'phosphor-react-native';
 
-import { TarsiAvatar } from '@/components/mascot/Tarsi';
+import { PatyAvatar } from '@/components/mascot/Paty';
 import { MonitorSetup } from '@/components/student/MonitorSetup';
 import { Card, ListGroup, ListRow, Notice, PillButton, SheetHeader, Text, TextField } from '@/components/ui';
 import { haptic } from '@/design/haptics';
@@ -92,7 +92,7 @@ export default function Account() {
         keyboardShouldPersistTaps="handled"
       >
         <Card style={styles.me}>
-          <TarsiAvatar size={52} />
+          <PatyAvatar size={52} />
           <View style={styles.flex}>
             <Text variant="title" numberOfLines={1}>
               {profile.display_name}

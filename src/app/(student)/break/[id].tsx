@@ -16,7 +16,7 @@ import { Diagram } from '@/components/learn/Diagram';
 import { CoinFly, SparkBurst } from '@/components/learn/Effects';
 import { MasteryRow } from '@/components/learn/MasteryRow';
 import { QuizOption, type OptionState } from '@/components/learn/QuizOption';
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { Card, CoinCounter, IconButton, PillButton, Ring, Text } from '@/components/ui';
 import { lessonFor } from '@/data/lessons';
 import { QUESTION_BY_ID } from '@/data/questions';
@@ -367,7 +367,7 @@ function Result({ skillLabel, from, to }: { skillLabel: string; from: number; to
         <View style={styles.counter}>
           <CoinCounter value={shown} />
         </View>
-        <Tarsi expression="cheering" size={150} />
+        <Paty expression="cheering" size={150} />
         <Text variant="largeTitle" align="center">
           {t.brk.doneTitle}
         </Text>

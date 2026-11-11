@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CheckCircle, HourglassMedium, Phone } from 'phosphor-react-native';
 
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { DevChip, PillButton, Ring, Text } from '@/components/ui';
 import { ThemeProvider, useTheme } from '@/design/theme';
 import { space } from '@/design/tokens';
@@ -89,7 +89,7 @@ function Lock() {
           color={c.indigo}
           accessibilityLabel={t.lock.until(formatClock(bedtime.end))}
         >
-          <Tarsi expression="sleepy" size={110} alive />
+          <Paty expression="sleepy" size={110} alive />
           <Text variant="statNumber" tabular>
             {formatDuration(leftMin)}
           </Text>

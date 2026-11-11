@@ -23,8 +23,9 @@ import {
 
 import { QuizOption, type OptionState } from '@/components/learn/QuizOption';
 import { SkillGraph } from '@/components/learn/SkillGraph';
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { MonitorSetup } from '@/components/student/MonitorSetup';
+import { Backdrop } from '@/components/ui/Backdrop';
 import {
   Card,
   IconButton,
@@ -156,6 +157,7 @@ export default function Onboarding() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[styles.root, { backgroundColor: c.bg, paddingTop: insets.top + 8, paddingBottom: insets.bottom + 16 }]}
     >
+      <Backdrop glowY={step === 'welcome' ? 0.36 : 0.12} />
       <View style={styles.top}>
         {canBack ? (
           <IconButton
@@ -292,7 +294,7 @@ function Welcome({ next, toSignIn }: { next: () => void; toSignIn: () => void })
   return (
     <View style={styles.flex}>
       <View style={styles.welcome}>
-        <Tarsi expression="waving" size={210} />
+        <Paty expression="waving" size={210} />
         <Text variant="largeTitle" align="center">
           {t.onb.welcome}
         </Text>
@@ -402,8 +404,8 @@ function LanguageStep({ next }: { next: () => void }) {
       sub={t.onb.languageSub}
       footer={<PillButton label={t.common.continue} size="lg" block onPress={next} />}
     >
-      <BigOption title="English" sub="Hi, I’m Tarsi." selected={lang === 'en'} onPress={() => set('en')} />
-      <BigOption title="Filipino" sub="Kumusta, ako si Tarsi." selected={lang === 'fil'} onPress={() => set('fil')} />
+      <BigOption title="English" sub="Hi, I’m Paty." selected={lang === 'en'} onPress={() => set('en')} />
+      <BigOption title="Filipino" sub="Kumusta, ako si Paty." selected={lang === 'fil'} onPress={() => set('fil')} />
     </Shell>
   );
 }
@@ -642,7 +644,7 @@ function LinkStep({ next }: { next: () => void }) {
           </View>
         ) : (
           <View style={styles.row}>
-            <Tarsi expression="curious" size={40} alive={false} interactive={false} />
+            <Paty expression="curious" size={40} alive={false} interactive={false} />
             <Text variant="subhead">{t.acct.linkWaiting}</Text>
           </View>
         )}
@@ -811,7 +813,7 @@ function NotifyStep({ next, role }: { next: () => void; role: Role }) {
       }
     >
       <View style={styles.center}>
-        <Tarsi expression={on ? 'happy' : 'curious'} size={140} />
+        <Paty expression={on ? 'happy' : 'curious'} size={140} />
       </View>
       {on ? (
         <Card style={styles.rowCard}>
@@ -842,7 +844,7 @@ function BedtimeStep({ next }: { next: () => void }) {
       footer={<PillButton label={t.common.continue} size="lg" block onPress={save} />}
     >
       <View style={styles.center}>
-        <Tarsi expression="sleepy" size={120} />
+        <Paty expression="sleepy" size={120} />
       </View>
       <Card>
         <WheelGroup>
@@ -1016,7 +1018,7 @@ function PitchUsage({ next }: { next: () => void }) {
           {t.onb.permTitle}
         </Text>
         <View style={styles.permRow}>
-          <Tarsi expression="happy" size={36} alive={false} interactive={false} />
+          <Paty expression="happy" size={36} alive={false} interactive={false} />
           <Text variant="headline" color={c.tileDarkText} style={styles.flex}>
             {t.onb.permApp}
           </Text>

@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { ArrowRight } from 'phosphor-react-native';
 
 import { IslaScene } from '@/components/isla/IslaScene';
-import { Tarsi, TarsiAvatar } from '@/components/mascot/Tarsi';
+import { Paty, PatyAvatar } from '@/components/mascot/Paty';
 import { Screen, useTabInset } from '@/components/student/Screen';
 import {
   AnimatedNumber,
@@ -75,7 +75,7 @@ export default function Home() {
           accessibilityHint="Long-press for the demo panel"
           style={styles.brand}
         >
-          <TarsiAvatar size={30} />
+          <PatyAvatar size={30} />
           <Text variant="title" style={styles.wordmark}>
             LearnShift
           </Text>
@@ -162,7 +162,7 @@ export default function Home() {
               />
             </View>
           )}
-          <Tarsi expression={night ? 'sleepy' : 'happy'} prop={night ? 'none' : 'pencil'} size={112} />
+          <Paty expression={night ? 'sleepy' : 'happy'} prop={night ? 'none' : 'pencil'} size={112} />
         </Card>
       </Stagger>
 

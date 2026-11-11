@@ -5,7 +5,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowUp, CheckCircle, SealCheck, Warning, XCircle } from 'phosphor-react-native';
 
-import { Tarsi } from '@/components/mascot/Tarsi';
+import { Paty } from '@/components/mascot/Paty';
 import { Card, Chip, InsetCard, PressableScale, SegmentedControl, SheetHeader, Skeleton, Text } from '@/components/ui';
 import { QUESTION_BY_ID } from '@/data/questions';
 import { haptic } from '@/design/haptics';
@@ -100,7 +100,7 @@ export default function TutorSheet() {
         {!ans ? (
           <Card style={styles.gap}>
             <View style={styles.thinking}>
-              <Tarsi expression="curious" size={56} />
+              <Paty expression="curious" size={56} />
               <Text variant="subhead">{t.tutor.thinking}…</Text>
             </View>
             <Skeleton width="80%" height={18} />
